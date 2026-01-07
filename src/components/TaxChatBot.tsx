@@ -154,32 +154,30 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
       <DialogContent className="w-full h-full max-w-full max-h-full sm:max-w-full sm:max-h-full rounded-none flex flex-col p-0 gap-0 data-[state=open]:slide-in-from-bottom-0"  style={{ width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}>
         {/* Header */}
         <DialogHeader className="p-4 border-b border-border flex-shrink-0">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <DialogTitle className="flex items-center gap-2 font-display text-lg">
               <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center">
                 <Bot className="w-4 h-4 text-primary-foreground" />
               </div>
               NaijaTaxBot AI
             </DialogTitle>
-            <div className="flex items-center gap-2">
-              {isVoiceMode && (
-                <div className="flex items-center gap-2 text-sm text-primary">
-                  <Volume2 className="w-4 h-4 animate-pulse" />
-                  <span>{conversation.isSpeaking ? "Speaking..." : "Listening..."}</span>
-                </div>
-              )}
-              {messages.length > 0 && !isLoading && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setMessages([])}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <RotateCcw className="w-4 h-4 mr-1" />
-                  New Chat
-                </Button>
-              )}
-            </div>
+            {messages.length > 0 && !isLoading && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMessages([])}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <RotateCcw className="w-4 h-4 mr-1" />
+                New Chat
+              </Button>
+            )}
+            {isVoiceMode && (
+              <div className="flex items-center gap-2 text-sm text-primary ml-auto">
+                <Volume2 className="w-4 h-4 animate-pulse" />
+                <span>{conversation.isSpeaking ? "Speaking..." : "Listening..."}</span>
+              </div>
+            )}
           </div>
         </DialogHeader>
 
