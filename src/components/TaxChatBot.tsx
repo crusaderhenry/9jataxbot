@@ -3,6 +3,17 @@ import { Send, Mic, Loader2, Bot, User, Volume2, Clock, MessageCircle, RotateCcw
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useConversation } from "@elevenlabs/react";
 import { toast } from "sonner";
@@ -162,15 +173,32 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
               NaijaTaxBot AI
             </DialogTitle>
             {messages.length > 0 && !isLoading && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setMessages([])}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <RotateCcw className="w-4 h-4 mr-1" />
-                New Chat
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-1" />
+                    New Chat
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Start a new chat?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will clear your current conversation. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => setMessages([])}>
+                      New Chat
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
             {isVoiceMode && (
               <div className="flex items-center gap-2 text-sm text-primary ml-auto">
