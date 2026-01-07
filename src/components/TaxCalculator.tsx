@@ -89,7 +89,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full h-full max-w-full max-h-full sm:max-w-full sm:max-h-full rounded-none overflow-y-auto" style={{ width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display text-xl">
             <Calculator className="w-5 h-5 text-primary" />

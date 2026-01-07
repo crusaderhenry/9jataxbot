@@ -3,7 +3,7 @@ import Hero from "@/components/Hero";
 import FAQSection from "@/components/FAQSection";
 import TaxCalculator from "@/components/TaxCalculator";
 import TaxChatBot from "@/components/TaxChatBot";
-import ChatButton from "@/components/ChatButton";
+import StickyActionBar from "@/components/StickyActionBar";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -24,7 +24,10 @@ const Index = () => {
       <FAQSection />
       <Footer />
       
-      <ChatButton onClick={() => setIsChatOpen(true)} />
+      <StickyActionBar 
+        onOpenChat={() => setIsChatOpen(true)} 
+        onOpenCalculator={() => setIsCalculatorOpen(true)} 
+      />
       
       <TaxChatBot 
         open={isChatOpen} 
