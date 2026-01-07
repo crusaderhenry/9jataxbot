@@ -31,7 +31,7 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       {/* Main content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         <h1 className="animate-fade-up font-display text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight" style={{ animationDelay: '0.2s' }}>
-          <span className="text-primary">TaxBot</span>NG
+          <span className="text-primary">Naija</span>TaxBot
         </h1>
         <p className="animate-fade-up text-xl md:text-2xl text-foreground/80 mb-4 font-display" style={{ animationDelay: '0.3s' }}>
           Understand Nigeria's New Tax Laws
