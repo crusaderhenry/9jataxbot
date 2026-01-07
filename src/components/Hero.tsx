@@ -1,4 +1,5 @@
-import { Calculator, MessageCircle, Calendar, ArrowRight, Sparkles, Scale, Mic, FileText } from "lucide-react";
+import { Calculator, MessageCircle, Calendar, ArrowRight, Sparkles, Scale, Mic, FileText, Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface HeroProps {
@@ -74,11 +75,18 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       </div>
 
       {/* Feature cards */}
-      <div className="animate-fade-up relative z-10 mt-16 grid grid-cols-1 md:grid-cols-4 gap-4 max-w-5xl mx-auto w-full px-4" style={{ animationDelay: '0.7s' }}>
+      <div className="animate-fade-up relative z-10 mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 max-w-6xl mx-auto w-full px-4" style={{ animationDelay: '0.7s' }}>
         <FeatureCard 
           icon={<Mic className="w-5 h-5" />}
-          title="Voice & Text AI"
-          description="Chat or speak with our tax assistant"
+          title="Voice AI"
+          description="Speak with our tax assistant"
+          comingSoon
+        />
+        <FeatureCard 
+          icon={<MessageCircle className="w-5 h-5" />}
+          title="WhatsApp Bot"
+          description="Chat via WhatsApp"
+          comingSoon
         />
         <FeatureCard 
           icon={<Calculator className="w-5 h-5" />}
@@ -100,8 +108,14 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
   );
 };
 
-const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) => (
-  <div className="glass rounded-2xl p-5 text-center hover:shadow-lg transition-shadow">
+const FeatureCard = ({ icon, title, description, comingSoon }: { icon: React.ReactNode; title: string; description: string; comingSoon?: boolean }) => (
+  <div className={`glass rounded-2xl p-5 text-center hover:shadow-lg transition-shadow relative ${comingSoon ? 'opacity-75' : ''}`}>
+    {comingSoon && (
+      <Badge variant="secondary" className="absolute -top-2 -right-2 text-[10px] px-2 py-0.5 bg-primary/20 text-primary border-primary/30">
+        <Clock className="w-3 h-3 mr-1" />
+        Soon
+      </Badge>
+    )}
     <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary mb-3">
       {icon}
     </div>
