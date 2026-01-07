@@ -1,4 +1,4 @@
-import { Calculator, MessageCircle, FileText, ArrowRight, Sparkles } from "lucide-react";
+import { Calculator, MessageCircle, Calendar, ArrowRight, Sparkles, Scale, Mic, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HeroProps {
@@ -74,21 +74,26 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       </div>
 
       {/* Feature cards */}
-      <div className="animate-fade-up relative z-10 mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto w-full px-4" style={{ animationDelay: '0.7s' }}>
+      <div className="animate-fade-up relative z-10 mt-16 grid grid-cols-1 md:grid-cols-4 gap-4 max-w-5xl mx-auto w-full px-4" style={{ animationDelay: '0.7s' }}>
         <FeatureCard 
-          icon={<MessageCircle className="w-5 h-5" />}
-          title="AI Tax Assistant"
-          description="Get instant answers with text or voice chat"
+          icon={<Mic className="w-5 h-5" />}
+          title="Voice & Text AI"
+          description="Chat or speak with our tax assistant"
         />
         <FeatureCard 
           icon={<Calculator className="w-5 h-5" />}
-          title="Smart Calculator"
-          description="Estimate taxes under new reform brackets"
+          title="Tax Calculator"
+          description="Estimate taxes under new brackets"
         />
         <FeatureCard 
-          icon={<FileText className="w-5 h-5" />}
-          title="Official Sources"
-          description="Information based on actual Bills"
+          icon={<Scale className="w-5 h-5" />}
+          title="Old vs New Regime"
+          description="Compare tax reforms side by side"
+        />
+        <FeatureCard 
+          icon={<Calendar className="w-5 h-5" />}
+          title="2026 Deadlines"
+          description="Key filing dates & reminders"
         />
       </div>
     </section>

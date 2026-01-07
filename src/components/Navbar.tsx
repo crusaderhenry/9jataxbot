@@ -20,6 +20,7 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -29,7 +30,25 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      
+      // Determine active section based on scroll position
+      const sections = navLinks.map(link => link.href.replace("#", ""));
+      let current = "";
+      
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 150 && rect.bottom >= 150) {
+            current = section;
+            break;
+          }
+        }
+      }
+      
+      setActiveSection(current);
     };
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -44,6 +63,10 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const isActive = (href: string) => {
+    return activeSection === href.replace("#", "");
   };
 
   return (
@@ -77,7 +100,11 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
               <button
                 key={link.href}
                 onClick={() => scrollToSection(link.href)}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
+                className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
+                  isActive(link.href)
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                }`}
               >
                 {link.label}
               </button>
@@ -135,7 +162,11 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
                     <button
                       key={link.href}
                       onClick={() => scrollToSection(link.href)}
-                      className="px-4 py-3 text-left text-foreground font-medium hover:bg-muted/50 rounded-lg transition-colors"
+                      className={`px-4 py-3 text-left font-medium rounded-lg transition-colors ${
+                        isActive(link.href)
+                          ? "text-primary bg-primary/10"
+                          : "text-foreground hover:bg-muted/50"
+                      }`}
                     >
                       {link.label}
                     </button>
