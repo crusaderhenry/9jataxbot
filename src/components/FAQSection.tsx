@@ -1,7 +1,12 @@
 import { useState, useMemo } from "react";
-import { Search, FileText, Building2, Users, Wallet, Receipt, Scale, Landmark, Globe } from "lucide-react";
+import { Search, FileText, Building2, Users, Wallet, Receipt, Scale, Landmark, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+
+interface FAQSectionProps {
+  onOpenChat: () => void;
+}
 
 const categories = [
   { id: "all", label: "All Topics", icon: <FileText className="w-4 h-4" /> },
@@ -172,7 +177,7 @@ const faqs = [
   },
 ];
 
-const FAQSection = () => {
+const FAQSection = ({ onOpenChat }: FAQSectionProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -250,17 +255,27 @@ const FAQSection = () => {
             ))}
           </Accordion>
         ) : (
-          <div className="text-center py-12 bg-secondary/50 rounded-2xl">
+          <div className="text-center py-12 bg-secondary/50 rounded-2xl space-y-4">
             <p className="text-muted-foreground">No questions found matching "{searchQuery}"</p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setActiveCategory("all");
-              }}
-              className="text-primary hover:underline mt-2"
-            >
-              Clear filters
-            </button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setActiveCategory("all");
+                }}
+                className="text-primary hover:underline"
+              >
+                Clear filters
+              </button>
+              <span className="hidden sm:inline text-muted-foreground">or</span>
+              <Button
+                onClick={onOpenChat}
+                className="accent-gradient text-primary-foreground"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Ask the Tax Bot
+              </Button>
+            </div>
           </div>
         )}
       </div>
