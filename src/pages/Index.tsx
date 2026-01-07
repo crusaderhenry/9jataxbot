@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import MobileStickyActions from "@/components/MobileStickyActions";
 import TaxExemptionSection from "@/components/TaxExemptionSection";
 import TaxComparisonSection from "@/components/TaxComparisonSection";
 import TaxCalendarSection from "@/components/TaxCalendarSection";
@@ -18,7 +19,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24 sm:pb-0">
       <Navbar 
         onOpenChat={() => setIsChatOpen(true)} 
         onOpenCalculator={() => setIsCalculatorOpen(true)} 
@@ -41,6 +42,11 @@ const Index = () => {
         <FAQSection onOpenChat={() => setIsChatOpen(true)} />
       </div>
       <Footer />
+
+      <MobileStickyActions
+        onOpenChat={() => setIsChatOpen(true)}
+        onOpenCalculator={() => setIsCalculatorOpen(true)}
+      />
       
       <TaxChatBot 
         open={isChatOpen} 
