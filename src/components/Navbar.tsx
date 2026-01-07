@@ -1,0 +1,153 @@
+import { useState, useEffect } from "react";
+import { Menu, X, Calculator, MessageCircle, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+interface NavbarProps {
+  onOpenChat: () => void;
+  onOpenCalculator: () => void;
+}
+
+const navLinks = [
+  { href: "#exemptions", label: "Exemptions" },
+  { href: "#comparison", label: "Old vs New" },
+  { href: "#calendar", label: "Tax Calendar" },
+  { href: "#faq", label: "FAQs" },
+];
+
+const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (href: string) => {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+    setIsOpen(false);
+  };
+
+  return (
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-background/80 backdrop-blur-lg border-b border-border shadow-sm"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="flex items-center gap-2"
+          >
+            <Sparkles className="w-6 h-6 text-primary" />
+            <span className="font-display text-xl font-bold text-foreground">
+              <span className="text-primary">Green</span>Tax
+            </span>
+          </a>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map((link) => (
+              <button
+                key={link.href}
+                onClick={() => scrollToSection(link.href)}
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Desktop CTAs */}
+          <div className="hidden md:flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onOpenCalculator}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Calculator className="w-4 h-4 mr-2" />
+              Calculator
+            </Button>
+            <Button
+              size="sm"
+              onClick={onOpenChat}
+              className="accent-gradient text-primary-foreground"
+            >
+              <MessageCircle className="w-4 h-4 mr-2" />
+              Ask AI
+            </Button>
+          </div>
+
+          {/* Mobile Menu */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon">
+                <Menu className="w-5 h-5" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[280px] bg-background">
+              <div className="flex flex-col gap-6 mt-8">
+                {/* Mobile Nav Links */}
+                <div className="flex flex-col gap-1">
+                  {navLinks.map((link) => (
+                    <button
+                      key={link.href}
+                      onClick={() => scrollToSection(link.href)}
+                      className="px-4 py-3 text-left text-foreground font-medium hover:bg-muted/50 rounded-lg transition-colors"
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Mobile CTAs */}
+                <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      onOpenCalculator();
+                      setIsOpen(false);
+                    }}
+                    className="justify-start"
+                  >
+                    <Calculator className="w-4 h-4 mr-2" />
+                    Tax Calculator
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      onOpenChat();
+                      setIsOpen(false);
+                    }}
+                    className="justify-start accent-gradient text-primary-foreground"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Ask Tax AI
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
