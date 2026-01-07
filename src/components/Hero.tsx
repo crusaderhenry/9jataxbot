@@ -9,10 +9,14 @@ interface HeroProps {
 
 const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
   return (
-    <section className="relative min-h-[90vh] hero-gradient flex flex-col items-center justify-center px-4 py-20 overflow-hidden">
+    <section className="relative min-h-[90vh] bg-background flex flex-col items-center justify-center px-4 py-20 overflow-hidden">
+      {/* Background gradient for dark mode */}
+      <div className="absolute inset-0 hero-gradient" />
+      
       {/* Decorative elements */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
       
       {/* Badge */}
       <div className="animate-fade-up relative z-10 mb-8" style={{ animationDelay: '0.1s' }}>

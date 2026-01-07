@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Hero from "@/components/Hero";
+import TaxExemptionSection from "@/components/TaxExemptionSection";
+import TaxComparisonSection from "@/components/TaxComparisonSection";
 import FAQSection from "@/components/FAQSection";
 import TaxCalculator from "@/components/TaxCalculator";
 import TaxChatBot from "@/components/TaxChatBot";
@@ -21,6 +23,8 @@ const Index = () => {
         onOpenCalculator={() => setIsCalculatorOpen(true)}
         onScrollToFAQ={scrollToFAQ}
       />
+      <TaxExemptionSection />
+      <TaxComparisonSection />
       <FAQSection onOpenChat={() => setIsChatOpen(true)} />
       <Footer />
       
