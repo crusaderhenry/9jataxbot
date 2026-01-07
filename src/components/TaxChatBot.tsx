@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Mic, Loader2, Bot, User, Volume2, Clock, MessageCircle } from "lucide-react";
+import { Send, Mic, Loader2, Bot, User, Volume2, Clock, MessageCircle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -161,12 +161,25 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
               </div>
               NaijaTaxBot AI
             </DialogTitle>
-            {isVoiceMode && (
-              <div className="flex items-center gap-2 text-sm text-primary">
-                <Volume2 className="w-4 h-4 animate-pulse" />
-                <span>{conversation.isSpeaking ? "Speaking..." : "Listening..."}</span>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {isVoiceMode && (
+                <div className="flex items-center gap-2 text-sm text-primary">
+                  <Volume2 className="w-4 h-4 animate-pulse" />
+                  <span>{conversation.isSpeaking ? "Speaking..." : "Listening..."}</span>
+                </div>
+              )}
+              {messages.length > 0 && !isLoading && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setMessages([])}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <RotateCcw className="w-4 h-4 mr-1" />
+                  New Chat
+                </Button>
+              )}
+            </div>
           </div>
         </DialogHeader>
 
