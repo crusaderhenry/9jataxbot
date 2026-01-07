@@ -1,131 +1,75 @@
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState, useMemo } from "react";
+import { Search, FileText, Building2, Users, Wallet, Receipt, Scale } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-const faqData = {
-  general: [
-    {
-      question: "So, what is this 'Nigeria Revenue Service' (NRS)?",
-      answer: "Think of the NRS as the modern, streamlined version of the FIRS. Instead of having different agencies chasing you for different taxes, the NRS is now the single, unified authority. It's designed to stop the \"multiple agency\" harassment and make everything work under one roof."
-    },
-    {
-      question: "I heard they scrapped a lot of taxes. Is that actually true?",
-      answer: "Yes, they really did clear the clutter. Old confusing taxes like the Education Tax, IT Levy, and Police Trust Fund tax are gone. They have been replaced by one single Development Levy (4% of profit), which makes calculating what you owe much simpler."
-    },
-    {
-      question: "What exactly is this 'Development Levy'?",
-      answer: "It's a consolidated contribution. Instead of paying small fees here and there for student loans, IT, or science funding, companies now pay just this one levy. It simplifies the paperwork and funds things like the Student Loan Scheme directly."
-    },
-    {
-      question: "Do I really need a Tax ID just to operate my bank account?",
-      answer: "Yes. Just like your BVN or NIN is for identity, the Tax ID is now mandatory for banking. It connects your financial life to the tax system to ensure everyone is in the loop and compliant."
-    },
-    {
-      question: "What is the 'Tax Ombudsman'?",
-      answer: "Think of this office as your \"referee.\" If a tax officer treats you unfairly or tries to bully you, you don't have to just take it. You can report them to the Ombudsman, an independent body created specifically to protect your rights without you needing a lawyer."
-    },
-    {
-      question: "When does all this start working?",
-      answer: "The general effective date is January 1, 2026 (following the signing into law in June 2025). However, big changes take time, so there are \"transitional provisions\" to let businesses and individuals adjust gradually without getting into trouble."
-    }
-  ],
-  salary: [
-    {
-      question: "Will I pay less PAYE tax now?",
-      answer: "For most salary earners, yes! The new graduated rates are more favorable, especially for lower and middle-income earners. The tax-free threshold has been increased to help those earning less."
-    },
-    {
-      question: "What reliefs can I claim as a salaried employee?",
-      answer: "You can claim the Consolidated Relief Allowance (CRA), which is 20% of your gross income plus ₦200,000. Additionally, contributions to pension schemes remain tax-deductible."
-    },
-    {
-      question: "How do I know if my employer is remitting my taxes?",
-      answer: "With your Tax ID linked to your bank account and the new unified system, you can verify your tax status through the NRS portal. Transparency is a key feature of the reform."
-    }
-  ],
-  business: [
-    {
-      question: "Does my small business need to pay the Development Levy?",
-      answer: "Only companies with turnover above a certain threshold pay the full 4% Development Levy. Micro and small businesses have reduced rates or may be exempt entirely."
-    },
-    {
-      question: "What happened to VAT for small businesses?",
-      answer: "Small businesses with annual turnover below ₦25 million are now exempt from VAT registration. This removes a significant compliance burden for micro-enterprises."
-    },
-    {
-      question: "How do I register my business for the new tax system?",
-      answer: "You'll need to obtain a Tax ID through the NRS portal. The process is being streamlined to be completed online, reducing the need for physical visits to tax offices."
-    },
-    {
-      question: "Are there tax incentives for startups?",
-      answer: "Yes! The reform includes provisions for pioneer status and tax holidays for qualifying businesses in priority sectors. Check with the NRS for specific eligibility criteria."
-    }
-  ]
-};
+const categories = [
+  { id: "all", label: "All Topics", icon: <FileText className="w-4 h-4" /> },
+  { id: "pit", label: "Personal Income Tax", icon: <Users className="w-4 h-4" /> },
+  { id: "cit", label: "Corporate Tax", icon: <Building2 className="w-4 h-4" /> },
+  { id: "vat", label: "VAT", icon: <Receipt className="w-4 h-4" /> },
+  { id: "relief", label: "Tax Relief", icon: <Wallet className="w-4 h-4" /> },
+  { id: "compliance", label: "Compliance", icon: <Scale className="w-4 h-4" /> },
+];
+
+const faqs = [
+  { id: "1", category: "pit", question: "What are the new Personal Income Tax brackets for 2026?", answer: "Under the 2025 reforms, the PIT structure has been revised to be more progressive. The first ₦800,000 of annual income is now tax-free (up from ₦300,000). Subsequent brackets apply graduated rates from 15% to 25% for the highest earners above ₦50 million annually." },
+  { id: "2", category: "pit", question: "How does the new Consolidated Relief Allowance (CRA) work?", answer: "The CRA has been simplified. You now receive an automatic relief of ₦800,000 or 20% of gross income (whichever is higher) plus 20% of earned income." },
+  { id: "3", category: "cit", question: "What changes affect small businesses under Corporate Income Tax?", answer: "Small companies (turnover below ₦25 million) remain exempt from CIT. Medium-sized companies (₦25-100 million turnover) now pay 20% instead of the previous 30%." },
+  { id: "4", category: "vat", question: "What is the new VAT rate and who is exempt?", answer: "The VAT rate increases to 10% from January 2026. Essential items remain exempt including basic food items, educational materials, and medical supplies." },
+  { id: "5", category: "relief", question: "What new tax reliefs are available for individuals?", answer: "New reliefs include: mortgage interest deduction up to ₦2 million annually, pension contributions up to 20% of income, and child education allowance for up to 4 children." },
+  { id: "6", category: "compliance", question: "What are the new filing deadlines under the reforms?", answer: "Individual tax returns are now due by March 31st (previously June 30th). Corporate returns remain due within 6 months of financial year-end." },
+];
 
 const FAQSection = () => {
-  const [activeTab, setActiveTab] = useState("general");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const filteredFaqs = useMemo(() => {
+    return faqs.filter((faq) => {
+      const matchesCategory = activeCategory === "all" || faq.category === activeCategory;
+      const matchesSearch = searchQuery === "" || faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [searchQuery, activeCategory]);
 
   return (
-    <section id="faq" className="bg-foreground py-20 px-4">
+    <section id="faq" className="py-20 px-4 bg-background">
       <div className="max-w-4xl mx-auto">
-        {/* Section header */}
         <div className="text-center mb-12">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Frequently Asked Questions
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-background mb-4">
-            Quick Answers to Common Questions
-          </h2>
-          <p className="text-background/70 max-w-2xl mx-auto">
-            Get instant answers about how the 2025 Tax Reforms may affect you.
-          </p>
+          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Find answers about Nigeria's 2025 tax reforms based on official Bills.</p>
         </div>
 
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8 bg-background/10 p-1 rounded-xl">
-            <TabsTrigger 
-              value="general" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-background/70 rounded-lg transition-all"
-            >
-              General & The Big Changes
-            </TabsTrigger>
-            <TabsTrigger 
-              value="salary"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-background/70 rounded-lg transition-all"
-            >
-              Salary Earners & Individuals
-            </TabsTrigger>
-            <TabsTrigger 
-              value="business"
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-background/70 rounded-lg transition-all"
-            >
-              Business Owners (SMEs)
-            </TabsTrigger>
-          </TabsList>
+        <div className="relative mb-8">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Input type="text" placeholder="Search questions..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-12 h-12 rounded-xl border-border bg-secondary/50" />
+        </div>
 
-          {Object.entries(faqData).map(([key, faqs]) => (
-            <TabsContent key={key} value={key} className="mt-0">
-              <Accordion type="single" collapsible className="space-y-3">
-                {faqs.map((faq, index) => (
-                  <AccordionItem 
-                    key={index} 
-                    value={`item-${index}`}
-                    className="bg-background/5 rounded-xl border-none px-6 data-[state=open]:bg-background/10 transition-colors"
-                  >
-                    <AccordionTrigger className="text-left text-background hover:no-underline py-5 text-base font-medium">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="text-background/70 pb-5 leading-relaxed">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </TabsContent>
+        <div className="flex flex-wrap gap-2 mb-8">
+          {categories.map((category) => (
+            <button key={category.id} onClick={() => setActiveCategory(category.id)} className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === category.id ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-secondary/80"}`}>
+              {category.icon}
+              <span className="hidden sm:inline">{category.label}</span>
+            </button>
           ))}
-        </Tabs>
+        </div>
+
+        {filteredFaqs.length > 0 ? (
+          <Accordion type="single" collapsible className="space-y-3">
+            {filteredFaqs.map((faq) => (
+              <AccordionItem key={faq.id} value={faq.id} className="bg-card rounded-xl border border-border px-6">
+                <AccordionTrigger className="text-left hover:no-underline py-5"><span className="font-medium text-foreground pr-4">{faq.question}</span></AccordionTrigger>
+                <AccordionContent className="text-muted-foreground pb-5">{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        ) : (
+          <div className="text-center py-12 bg-secondary/50 rounded-2xl">
+            <p className="text-muted-foreground">No questions found.</p>
+            <button onClick={() => { setSearchQuery(""); setActiveCategory("all"); }} className="text-primary hover:underline mt-2">Clear filters</button>
+          </div>
+        )}
       </div>
     </section>
   );
