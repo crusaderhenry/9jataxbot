@@ -17,9 +17,9 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "apple-touch-icon.png", "og-image.png"],
       manifest: {
-        name: "TaxBotNG - Nigeria Tax Reforms",
-        short_name: "TaxBotNG",
-        description: "Understand Nigeria's 2025 tax reforms with TaxBotNG. AI-powered tax assistant, calculator, and FAQs.",
+        name: "NaijaTaxBot - Nigeria Tax Reforms",
+        short_name: "NaijaTaxBot",
+        description: "Understand Nigeria's 2025 tax reforms with NaijaTaxBot. AI-powered tax assistant, calculator, and FAQs.",
         theme_color: "#22c55e",
         background_color: "#0f1612",
         display: "standalone",

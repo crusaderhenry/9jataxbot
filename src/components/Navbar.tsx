@@ -3,7 +3,7 @@ import { Menu, Calculator, MessageCircle, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
-import taxbotLogo from "@/assets/taxbotng-logo.png";
+import naijaTaxBotLogo from "@/assets/naijataxbot-logo.png";
 
 interface NavbarProps {
   onOpenChat: () => void;
@@ -89,9 +89,9 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
             }}
             className="flex items-center gap-2"
           >
-            <img src={taxbotLogo} alt="TaxBotNG" className="w-8 h-8 rounded-lg" />
+            <img src={naijaTaxBotLogo} alt="NaijaTaxBot" className="w-8 h-8 rounded-lg" />
             <span className="font-display text-xl font-bold text-foreground">
-              <span className="text-primary">TaxBot</span>NG
+              <span className="text-primary">Naija</span>TaxBot
             </span>
           </a>
 

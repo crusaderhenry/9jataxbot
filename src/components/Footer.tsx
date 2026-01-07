@@ -9,7 +9,7 @@ const Footer = () => {
           <FileText className="w-4 h-4" />
           <span>Based on Bills HB 1756-1759</span>
         </div>
-        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} TaxBotNG. Educational tool only. Not legal or financial advice.</p>
+        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} NaijaTaxBot. Educational tool only. Not legal or financial advice.</p>
       </div>
     </footer>
   );
