@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calculator, ArrowRight, Info, HelpCircle } from "lucide-react";
+import { Calculator, ArrowRight, Info, HelpCircle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -128,6 +128,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
               <Input
                 id="income"
                 type="text"
+                inputMode="numeric"
                 placeholder="e.g. 500,000"
                 value={monthlyIncome}
                 onChange={(e) => handleInputChange(e.target.value)}
@@ -140,14 +141,23 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
               )}
             </div>
 
-            <Button 
-              onClick={handleCalculate} 
-              className="w-full accent-gradient text-primary-foreground"
-              disabled={!monthlyIncome || parseFloat(monthlyIncome.replace(/,/g, '')) <= 0}
-            >
-              Calculate Tax
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleCalculate} 
+                className="flex-1 accent-gradient text-primary-foreground"
+                disabled={!monthlyIncome || parseFloat(monthlyIncome.replace(/,/g, '')) <= 0}
+              >
+                Calculate Tax
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => { setMonthlyIncome(""); setResult(null); }}
+                disabled={!monthlyIncome && !result}
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
 
             {/* Results */}
             {result && (
