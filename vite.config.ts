@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "apple-touch-icon.png", "og-image.png"],
+      includeAssets: ["favicon.png", "apple-touch-icon.png", "og-image.png", "icon-192x192.png", "icon-512x512.png", "maskable-icon-512x512.png"],
       manifest: {
         name: "NaijaTaxBot - Nigeria's 2025 Tax Reforms",
         short_name: "NaijaTaxBot",
@@ -30,10 +30,22 @@ export default defineConfig(({ mode }) => ({
         categories: ["finance", "education", "utilities"],
         icons: [
           {
-            src: "/favicon.png",
+            src: "/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "/icon-512x512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "any",
+          },
+          {
+            src: "/maskable-icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
           },
           {
             src: "/apple-touch-icon.png",
