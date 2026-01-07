@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Calculator, ArrowRight, Info, HelpCircle, Building2, ShieldCheck } from "lucide-react";
+import { Calculator, ArrowRight, Info, HelpCircle, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 interface TaxCalculatorProps {
   open: boolean;
@@ -21,32 +23,38 @@ const taxBrackets = [
   { min: 50000001, max: Infinity, rate: 0.25, description: "25% bracket" },
 ];
 
-// Tax exempt categories based on 2025 reforms
-const exemptCategories = [
-  {
-    title: "Small Companies",
-    description: "Gross turnover ≤ ₦50m and fixed assets ≤ ₦250m",
-    exemptions: ["CIT", "CGT", "4% Dev Levy"],
-  },
-  {
-    title: "Essential Goods & Services",
-    description: "Zero-rated for VAT purposes",
-    exemptions: ["Food items", "Medical supplies", "Educational materials"],
-  },
-  {
-    title: "Low-Income Earners",
-    description: "Annual income ≤ ₦800,000 after reliefs",
-    exemptions: ["Personal Income Tax"],
-  },
-  {
-    title: "Export Activities",
-    description: "Non-oil exports and Free Zone operations",
-    exemptions: ["VAT on exports", "CGT (conditions apply)"],
-  },
-];
+interface TaxReliefs {
+  pensionRate: number; // 0-20%
+  mortgageInterest: number; // up to ₦2M annually
+  childEducation: number; // number of children (up to 4)
+  nhfContribution: boolean; // 2.5% of basic
+}
 
-const calculateTax = (annualIncome: number): { tax: number; effectiveRate: number; breakdown: { bracket: string; tax: number }[] } => {
-  let remainingIncome = annualIncome;
+const calculateTax = (
+  annualIncome: number,
+  reliefs: TaxReliefs
+): { 
+  tax: number; 
+  effectiveRate: number; 
+  breakdown: { bracket: string; tax: number }[];
+  totalReliefs: number;
+  taxableIncome: number;
+} => {
+  // Calculate reliefs
+  const pensionRelief = annualIncome * (reliefs.pensionRate / 100);
+  const mortgageRelief = Math.min(reliefs.mortgageInterest, 2000000);
+  const childEducationRelief = reliefs.childEducation * 250000; // ₦250,000 per child
+  const nhfRelief = reliefs.nhfContribution ? annualIncome * 0.025 : 0;
+  
+  // Consolidated Relief Allowance (CRA): Higher of ₦800,000 or 20% of gross + 20% of earned income
+  const craBase = Math.max(800000, annualIncome * 0.2);
+  const craEarned = annualIncome * 0.2;
+  const totalCRA = craBase + craEarned;
+  
+  const totalReliefs = pensionRelief + mortgageRelief + childEducationRelief + nhfRelief + totalCRA;
+  const taxableIncome = Math.max(0, annualIncome - totalReliefs);
+  
+  let remainingIncome = taxableIncome;
   let totalTax = 0;
   const breakdown: { bracket: string; tax: number }[] = [];
 
@@ -78,7 +86,7 @@ const calculateTax = (annualIncome: number): { tax: number; effectiveRate: numbe
 
   const effectiveRate = annualIncome > 0 ? (totalTax / annualIncome) * 100 : 0;
 
-  return { tax: totalTax, effectiveRate, breakdown };
+  return { tax: totalTax, effectiveRate, breakdown, totalReliefs, taxableIncome };
 };
 
 const formatCurrency = (amount: number) => {
@@ -92,14 +100,26 @@ const formatCurrency = (amount: number) => {
 
 const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
   const [monthlyIncome, setMonthlyIncome] = useState<string>("");
-  const [result, setResult] = useState<{ tax: number; effectiveRate: number; breakdown: { bracket: string; tax: number }[] } | null>(null);
+  const [reliefs, setReliefs] = useState<TaxReliefs>({
+    pensionRate: 8,
+    mortgageInterest: 0,
+    childEducation: 0,
+    nhfContribution: false,
+  });
+  const [result, setResult] = useState<{ 
+    tax: number; 
+    effectiveRate: number; 
+    breakdown: { bracket: string; tax: number }[];
+    totalReliefs: number;
+    taxableIncome: number;
+  } | null>(null);
 
   const handleCalculate = () => {
     const monthly = parseFloat(monthlyIncome.replace(/,/g, ''));
     if (isNaN(monthly) || monthly <= 0) return;
     
     const annual = monthly * 12;
-    const taxResult = calculateTax(annual);
+    const taxResult = calculateTax(annual, reliefs);
     setResult(taxResult);
   };
 
@@ -114,7 +134,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="w-full h-full max-w-full max-h-full sm:max-w-full sm:max-h-full rounded-none overflow-y-auto" style={{ width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}>
-        <div className="max-w-2xl mx-auto w-full">
+        <div className="max-w-2xl mx-auto w-full pb-8">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 font-display text-xl">
               <Calculator className="w-5 h-5 text-primary" />
@@ -123,7 +143,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
           </DialogHeader>
 
           <div className="space-y-6 py-4">
-            {/* Input */}
+            {/* Income Input */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Label htmlFor="income" className="text-sm font-medium">
@@ -149,16 +169,113 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
               {monthlyIncome && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <span>Annual income: {formatCurrency(annualIncome)}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Tax Reliefs Section */}
+            <div className="space-y-4 p-4 bg-secondary/50 rounded-xl border border-border">
+              <div className="flex items-center gap-2">
+                <Percent className="w-4 h-4 text-primary" />
+                <h3 className="font-medium text-foreground">Tax Reliefs & Deductions</h3>
+              </div>
+
+              {/* Pension Contribution */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm">Pension Contribution</Label>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>Contributions to approved pension schemes are tax-deductible up to 20% of your income.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <span className="text-sm font-medium text-primary">{reliefs.pensionRate}%</span>
+                </div>
+                <Slider
+                  value={[reliefs.pensionRate]}
+                  onValueChange={(value) => setReliefs({ ...reliefs, pensionRate: value[0] })}
+                  max={20}
+                  step={1}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">Up to 20% of income is tax-deductible</p>
+              </div>
+
+              {/* Mortgage Interest */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">Annual Mortgage Interest (₦)</Label>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <HelpCircle className="w-3.5 h-3.5 cursor-help" />
+                      <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Monthly income × 12 months</p>
+                    <TooltipContent className="max-w-xs">
+                      <p>Interest paid on mortgage for owner-occupied residential property. Maximum deduction: ₦2,000,000 per year.</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
-              )}
+                <Input
+                  type="text"
+                  placeholder="e.g. 1,000,000"
+                  value={reliefs.mortgageInterest > 0 ? reliefs.mortgageInterest.toLocaleString() : ""}
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value.replace(/,/g, '')) || 0;
+                    setReliefs({ ...reliefs, mortgageInterest: Math.min(val, 2000000) });
+                  }}
+                  className="h-10"
+                />
+                <p className="text-xs text-muted-foreground">Maximum: ₦2,000,000 annually</p>
+              </div>
+
+              {/* Child Education */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm">Children in Education</Label>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p>Child education allowance of ₦250,000 per child, for up to 4 children.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <span className="text-sm font-medium text-primary">{reliefs.childEducation} child{reliefs.childEducation !== 1 ? 'ren' : ''}</span>
+                </div>
+                <Slider
+                  value={[reliefs.childEducation]}
+                  onValueChange={(value) => setReliefs({ ...reliefs, childEducation: value[0] })}
+                  max={4}
+                  step={1}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">₦250,000 allowance per child (max 4)</p>
+              </div>
+
+              {/* NHF Contribution */}
+              <div className="flex items-center justify-between py-2">
+                <div className="flex items-center gap-2">
+                  <Label className="text-sm">NHF Contribution (2.5%)</Label>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p>National Housing Fund contribution at 2.5% of basic salary is tax-deductible.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+                <Switch
+                  checked={reliefs.nhfContribution}
+                  onCheckedChange={(checked) => setReliefs({ ...reliefs, nhfContribution: checked })}
+                />
+              </div>
             </div>
 
             <Button 
@@ -183,7 +300,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                           <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Total personal income tax payable for the year based on progressive brackets</p>
+                          <p>Total personal income tax payable for the year after reliefs</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -199,6 +316,18 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                   </div>
                 </div>
 
+                {/* Reliefs summary */}
+                <div className="bg-primary/5 rounded-xl p-4 border border-primary/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-muted-foreground">Total Reliefs Applied</span>
+                    <span className="text-lg font-semibold text-primary">{formatCurrency(result.totalReliefs)}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Taxable Income</span>
+                    <span className="font-medium text-foreground">{formatCurrency(result.taxableIncome)}</span>
+                  </div>
+                </div>
+
                 {/* Effective rate */}
                 <div className="bg-muted/50 rounded-xl p-4">
                   <div className="flex items-center justify-between">
@@ -209,7 +338,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                           <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>The actual percentage of your income paid as tax. This is lower than the marginal rate due to progressive brackets.</p>
+                          <p>The actual percentage of your gross income paid as tax after all reliefs.</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -224,15 +353,17 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                 </div>
 
                 {/* Breakdown */}
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-foreground">Tax Breakdown</p>
-                  {result.breakdown.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
-                      <span className="text-muted-foreground">{item.bracket}</span>
-                      <span className="font-medium">{formatCurrency(item.tax)}</span>
-                    </div>
-                  ))}
-                </div>
+                {result.breakdown.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-foreground">Tax Breakdown</p>
+                    {result.breakdown.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
+                        <span className="text-muted-foreground">{item.bracket}</span>
+                        <span className="font-medium">{formatCurrency(item.tax)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* Net income */}
                 <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
@@ -244,7 +375,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                           <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Your income after personal income tax. Other deductions (pension, NHF, etc.) not included.</p>
+                          <p>Your gross income minus tax. Pension/NHF contributions deducted separately by employer.</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -259,43 +390,12 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
               </div>
             )}
 
-            {/* Tax Exemption Categories */}
-            <div className="space-y-4 pt-4 border-t border-border">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-primary" />
-                <h3 className="font-display font-semibold text-foreground">Tax Exemption Categories</h3>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {exemptCategories.map((category, index) => (
-                  <div key={index} className="bg-secondary/50 rounded-xl p-4 border border-border">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Building2 className="w-4 h-4 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-foreground text-sm">{category.title}</h4>
-                        <p className="text-xs text-muted-foreground mt-0.5">{category.description}</p>
-                        <div className="flex flex-wrap gap-1.5 mt-2">
-                          {category.exemptions.map((exemption, i) => (
-                            <span key={i} className="inline-flex px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
-                              {exemption}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* Disclaimer */}
             <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
               <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <p>
-                This calculator provides estimates based on the 2025 tax reform brackets. 
-                Actual tax may vary based on individual circumstances, reliefs, and deductions. 
-                Consult a tax professional for accurate calculations.
+                This calculator provides estimates based on the 2025 tax reform brackets and includes CRA (Consolidated Relief Allowance). 
+                Actual tax may vary based on individual circumstances. Consult a tax professional for accurate calculations.
               </p>
             </div>
           </div>
