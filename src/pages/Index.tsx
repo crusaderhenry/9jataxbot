@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import MobileStickyActions from "@/components/MobileStickyActions";
 import TaxExemptionSection from "@/components/TaxExemptionSection";
-import TaxComparisonSection from "@/components/TaxComparisonSection";
 import TaxCalendarSection from "@/components/TaxCalendarSection";
 import FAQSection from "@/components/FAQSection";
 import TaxCalculator from "@/components/TaxCalculator";
@@ -31,9 +30,6 @@ const Index = () => {
       />
       <div id="exemptions">
         <TaxExemptionSection />
-      </div>
-      <div id="comparison">
-        <TaxComparisonSection />
       </div>
       <div id="calendar">
         <TaxCalendarSection />
