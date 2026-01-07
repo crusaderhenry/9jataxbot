@@ -12,7 +12,6 @@ interface NavbarProps {
 
 const navLinks = [
   { href: "#exemptions", label: "Exemptions" },
-  { href: "#comparison", label: "Old vs New" },
   { href: "#calendar", label: "Tax Calendar" },
   { href: "#faq", label: "FAQs" },
 ];
