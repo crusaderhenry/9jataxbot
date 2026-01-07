@@ -147,7 +147,7 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg h-[85vh] sm:h-[600px] flex flex-col p-0 gap-0">
+      <DialogContent className="w-full h-full max-w-full max-h-full sm:max-w-full sm:max-h-full rounded-none flex flex-col p-0 gap-0 data-[state=open]:slide-in-from-bottom-0"  style={{ width: '100vw', height: '100vh', maxWidth: '100vw', maxHeight: '100vh' }}>
         {/* Header */}
         <DialogHeader className="p-4 border-b border-border flex-shrink-0">
           <div className="flex items-center justify-between">
