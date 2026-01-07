@@ -19,13 +19,7 @@ interface TaxChatBotProps {
 }
 
 const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content: "Hello! I'm NaijaTaxBot AI, your guide to Nigeria's 2025 tax reforms. Ask me anything about the new tax laws, brackets, or compliance requirements. How can I help you today?"
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
@@ -78,7 +72,7 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
     try {
       const { data, error } = await supabase.functions.invoke("tax-chat", {
         body: {
-          messages: [...messages.filter(m => m.id !== "welcome"), userMessage].map(m => ({
+          messages: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content,
           })),
