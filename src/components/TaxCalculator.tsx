@@ -88,8 +88,11 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
   };
 
   const handleInputChange = (value: string) => {
-    const cleaned = value.replace(/[^0-9,]/g, '');
-    setMonthlyIncome(cleaned);
+    // Remove non-numeric characters except for processing
+    const numericValue = value.replace(/[^0-9]/g, '');
+    // Format with commas
+    const formatted = numericValue ? Number(numericValue).toLocaleString('en-NG') : '';
+    setMonthlyIncome(formatted);
     setResult(null);
   };
 
@@ -149,8 +152,8 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
             {/* Results */}
             {result && (
               <div className="space-y-4 animate-fade-in">
-                {/* Summary cards */}
-                <div className="grid grid-cols-2 gap-4">
+              {/* Summary cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-primary/10 rounded-xl p-4 text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
                       <p className="text-sm text-muted-foreground">Annual Tax</p>
