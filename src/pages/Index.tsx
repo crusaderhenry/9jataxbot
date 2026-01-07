@@ -7,7 +7,6 @@ import TaxCalendarSection from "@/components/TaxCalendarSection";
 import FAQSection from "@/components/FAQSection";
 import TaxCalculator from "@/components/TaxCalculator";
 import TaxChatBot from "@/components/TaxChatBot";
-import StickyActionBar from "@/components/StickyActionBar";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -42,11 +41,6 @@ const Index = () => {
         <FAQSection onOpenChat={() => setIsChatOpen(true)} />
       </div>
       <Footer />
-      
-      <StickyActionBar 
-        onOpenChat={() => setIsChatOpen(true)} 
-        onOpenCalculator={() => setIsCalculatorOpen(true)} 
-      />
       
       <TaxChatBot 
         open={isChatOpen} 
