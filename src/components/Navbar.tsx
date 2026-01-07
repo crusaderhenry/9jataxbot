@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Menu, X, Calculator, MessageCircle, Sparkles } from "lucide-react";
+import { Menu, Calculator, MessageCircle, Sparkles, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useTheme } from "next-themes";
 
 interface NavbarProps {
   onOpenChat: () => void;
@@ -18,6 +19,12 @@ const navLinks = [
 const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +40,10 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
       element.scrollIntoView({ behavior: "smooth" });
     }
     setIsOpen(false);
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -75,6 +86,20 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center gap-2">
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -119,6 +144,20 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
 
                 {/* Mobile CTAs */}
                 <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                  {mounted && (
+                    <Button
+                      variant="outline"
+                      onClick={toggleTheme}
+                      className="justify-start"
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="w-4 h-4 mr-2" />
+                      ) : (
+                        <Moon className="w-4 h-4 mr-2" />
+                      )}
+                      {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     onClick={() => {
