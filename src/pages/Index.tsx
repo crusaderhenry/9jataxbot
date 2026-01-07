@@ -21,7 +21,7 @@ const Index = () => {
         onOpenCalculator={() => setIsCalculatorOpen(true)}
         onScrollToFAQ={scrollToFAQ}
       />
-      <FAQSection />
+      <FAQSection onOpenChat={() => setIsChatOpen(true)} />
       <Footer />
       
       <StickyActionBar 
