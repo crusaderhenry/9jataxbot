@@ -11,7 +11,7 @@ export default function MobileStickyActions({
   onOpenCalculator,
 }: MobileStickyActionsProps) {
   return (
-    <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom">
+    <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 safe-area-bottom animate-slide-up">
       <div className="bg-background/85 backdrop-blur-lg border-t border-border">
         <div className="max-w-7xl mx-auto px-4 pt-3 pb-4">
           <div className="grid grid-cols-2 gap-2">
