@@ -90,7 +90,7 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
           >
             <Sparkles className="w-6 h-6 text-primary" />
             <span className="font-display text-xl font-bold text-foreground">
-              <span className="text-primary">Green</span>Tax
+              <span className="text-primary">TaxBot</span>NG
             </span>
           </a>
 
