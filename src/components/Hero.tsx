@@ -32,7 +32,7 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       {/* Main content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         <h1 className="animate-fade-up font-display text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight" style={{ animationDelay: '0.2s' }}>
-          <span className="text-primary">Green</span>Tax
+          <span className="text-primary">TaxBot</span>NG
         </h1>
         <p className="animate-fade-up text-xl md:text-2xl text-foreground/80 mb-4 font-display" style={{ animationDelay: '0.3s' }}>
           Understand Nigeria's New Tax Laws
@@ -42,22 +42,22 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
         </p>
 
         {/* CTA Buttons */}
-        <div className="animate-fade-up flex flex-col sm:flex-row items-center justify-center gap-4 mb-12" style={{ animationDelay: '0.5s' }}>
+        <div className="animate-fade-up flex flex-col sm:flex-row items-center justify-center gap-3 mb-12" style={{ animationDelay: '0.5s' }}>
           <Button 
             size="lg" 
-            className="w-full sm:w-auto min-w-[200px] accent-gradient hover:opacity-90 transition-opacity text-primary-foreground shadow-lg"
+            className="w-full sm:w-auto min-w-[180px] accent-gradient hover:opacity-90 transition-opacity text-primary-foreground shadow-lg text-sm sm:text-base px-4 sm:px-6"
             onClick={onOpenChat}
           >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            Ask the Tax Bot
+            <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+            Ask Tax Bot
           </Button>
           <Button 
             size="lg" 
             variant="outline"
-            className="w-full sm:w-auto min-w-[200px] border-primary/30 hover:bg-primary/5"
+            className="w-full sm:w-auto min-w-[180px] border-primary/30 hover:bg-primary/5 text-sm sm:text-base px-4 sm:px-6"
             onClick={onOpenCalculator}
           >
-            <Calculator className="w-5 h-5 mr-2" />
+            <Calculator className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Tax Calculator
           </Button>
         </div>
@@ -77,16 +77,9 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       {/* Feature cards */}
       <div className="animate-fade-up relative z-10 mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 max-w-6xl mx-auto w-full px-4" style={{ animationDelay: '0.7s' }}>
         <FeatureCard 
-          icon={<Mic className="w-5 h-5" />}
-          title="Voice AI"
-          description="Speak with our tax assistant"
-          comingSoon
-        />
-        <FeatureCard 
           icon={<MessageCircle className="w-5 h-5" />}
-          title="WhatsApp Bot"
-          description="Chat via WhatsApp"
-          comingSoon
+          title="Tax Bot"
+          description="Chat with our AI tax assistant"
         />
         <FeatureCard 
           icon={<Calculator className="w-5 h-5" />}
@@ -94,14 +87,20 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
           description="Estimate taxes under new brackets"
         />
         <FeatureCard 
+          icon={<Calendar className="w-5 h-5" />}
+          title="2026 Deadlines"
+          description="Key filing dates & reminders"
+        />
+        <FeatureCard 
           icon={<Scale className="w-5 h-5" />}
           title="Old vs New Regime"
           description="Compare tax reforms side by side"
         />
         <FeatureCard 
-          icon={<Calendar className="w-5 h-5" />}
-          title="2026 Deadlines"
-          description="Key filing dates & reminders"
+          icon={<Mic className="w-5 h-5" />}
+          title="Voice AI"
+          description="Speak with our tax assistant"
+          comingSoon
         />
       </div>
     </section>

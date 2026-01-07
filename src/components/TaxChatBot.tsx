@@ -23,7 +23,7 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
     {
       id: "welcome",
       role: "assistant",
-      content: "Hello! I'm GreenTax AI, your guide to Nigeria's 2025 tax reforms. Ask me anything about the new tax laws, brackets, or compliance requirements. How can I help you today?"
+      content: "Hello! I'm TaxBotNG AI, your guide to Nigeria's 2025 tax reforms. Ask me anything about the new tax laws, brackets, or compliance requirements. How can I help you today?"
     }
   ]);
   const [input, setInput] = useState("");
@@ -155,7 +155,7 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
               <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center">
                 <Bot className="w-4 h-4 text-primary-foreground" />
               </div>
-              GreenTax AI
+              TaxBotNG AI
             </DialogTitle>
             {isVoiceMode && (
               <div className="flex items-center gap-2 text-sm text-primary">
