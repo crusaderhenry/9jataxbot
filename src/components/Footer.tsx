@@ -1,4 +1,5 @@
 import { FileText, Mic, MessageCircle, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -28,9 +29,15 @@ const Footer = () => {
             <FileText className="w-4 h-4" />
             <span>Based on Bills HB 1756-1759</span>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground mb-2">
             © {new Date().getFullYear()} NaijaTaxBot. Educational tool only. Not legal or financial advice.
           </p>
+          <Link 
+            to="/privacy" 
+            className="text-xs text-muted-foreground hover:text-primary transition-colors"
+          >
+            Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>
