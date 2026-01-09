@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
                 1. Introduction
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Welcome to NaijaTaxBot ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of any information you provide while using our Nigerian tax information service. This Privacy Policy explains how we collect, use, and safeguard your information when you use our website and services.
+                Welcome to NaijaTaxAI ("we," "our," or "us"). We are committed to protecting your privacy and ensuring the security of any information you provide while using our Nigerian tax information service. This Privacy Policy explains how we collect, use, and safeguard your information when you use our website and services.
               </p>
             </section>
 
@@ -45,7 +45,7 @@ const PrivacyPolicy = () => {
                 2. Information We Collect
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-3">
-                NaijaTaxBot is designed to minimize data collection. We may collect:
+                NaijaTaxAI is designed to minimize data collection. We may collect:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                 <li><strong className="text-foreground">Chat Interactions:</strong> Questions and queries you submit to our AI tax assistant for processing and response generation.</li>
@@ -96,7 +96,7 @@ const PrivacyPolicy = () => {
                 6. Cookies and Local Storage
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                NaijaTaxBot uses local storage to save your theme preferences (light/dark mode) and support Progressive Web App (PWA) functionality. These are essential for providing a consistent user experience and do not track personal information.
+                NaijaTaxAI uses local storage to save your theme preferences (light/dark mode) and support Progressive Web App (PWA) functionality. These are essential for providing a consistent user experience and do not track personal information.
               </p>
             </section>
 
@@ -114,7 +114,7 @@ const PrivacyPolicy = () => {
                 8. Children's Privacy
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                NaijaTaxBot is not directed at individuals under the age of 13. We do not knowingly collect personal information from children. If you believe we have inadvertently collected information from a child, please contact us immediately.
+                NaijaTaxAI is not directed at individuals under the age of 13. We do not knowingly collect personal information from children. If you believe we have inadvertently collected information from a child, please contact us immediately.
               </p>
             </section>
 
@@ -138,7 +138,7 @@ const PrivacyPolicy = () => {
 
             <section className="border-t border-border pt-6 mt-8">
               <p className="text-sm text-muted-foreground italic">
-                This Privacy Policy is provided for informational purposes. NaijaTaxBot is an educational tool and does not provide legal, financial, or professional tax advice. For specific legal guidance regarding data protection, please consult a qualified legal professional.
+                This Privacy Policy is provided for informational purposes. NaijaTaxAI is an educational tool and does not provide legal, financial, or professional tax advice. For specific legal guidance regarding data protection, please consult a qualified legal professional.
               </p>
             </section>
           </div>

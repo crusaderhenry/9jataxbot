@@ -170,7 +170,7 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
               <div className="w-8 h-8 rounded-full accent-gradient flex items-center justify-center">
                 <Bot className="w-4 h-4 text-primary-foreground" />
               </div>
-              NaijaTaxBot AI
+              NaijaTaxAI
             </DialogTitle>
             {messages.length > 0 && !isLoading && (
               <AlertDialog>

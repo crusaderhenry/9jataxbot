@@ -18,9 +18,9 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "apple-touch-icon.png", "og-image.png", "icon-192x192.png", "icon-512x512.png", "maskable-icon-512x512.png"],
       manifest: {
-        name: "NaijaTaxBot - Nigeria's 2025 Tax Reforms",
-        short_name: "NaijaTaxBot",
-        description: "Understand Nigeria's 2025 tax reforms with NaijaTaxBot. AI-powered tax assistant, calculator, and FAQs based on official Bills HB 1756-1759.",
+        name: "NaijaTaxAI - Nigeria's 2025 Tax Reforms",
+        short_name: "NaijaTaxAI",
+        description: "Understand Nigeria's 2025 tax reforms with NaijaTaxAI. AI-powered tax assistant, calculator, and FAQs based on official Bills HB 1756-1759.",
         theme_color: "#22c55e",
         background_color: "#0f1612",
         display: "standalone",
