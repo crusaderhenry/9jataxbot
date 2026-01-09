@@ -5,11 +5,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Trusted Nigerian news sources for tax news
+// Trusted Nigerian news sources for tax news (updated Jan 2026)
 const TRUSTED_SOURCES = [
-  'firs.gov.ng',
-  'tat.gov.ng',
-  'fiscalreforms.ng',
+  'nrs.gov.ng',        // New: Nigeria Revenue Service (replaced FIRS)
+  'firs.gov.ng',       // Legacy FIRS
+  'tat.gov.ng',        // Tax Appeal Tribunal
+  'fiscalreforms.ng',  // Presidential Fiscal Policy & Tax Reforms Committee
+  'finance.gov.ng',    // Federal Ministry of Finance
+  'nassnig.org',       // National Assembly
   'thisdaylive.com',
   'businessday.ng',
   'vanguardngr.com',
@@ -17,6 +20,8 @@ const TRUSTED_SOURCES = [
   'premiumtimesng.com',
   'guardian.ng',
   'nairametrics.com',
+  'pwc.com/ng',        // PwC Nigeria tax insights
+  'kpmg.com',          // KPMG tax alerts
 ];
 
 interface NewsItem {
@@ -73,7 +78,7 @@ Deno.serve(async (req) => {
     console.log('Fetching fresh news from Perplexity...');
 
     // Fetch fresh news from Perplexity
-    const searchQuery = `Nigeria tax reform 2025 2026 latest news FIRS Federal Inland Revenue Service tax policy VAT income tax site:${TRUSTED_SOURCES.join(' OR site:')}`;
+    const searchQuery = `Nigeria tax reform 2025 2026 NRS Nigeria Revenue Service NTA tax policy VAT CIT income tax compliance site:${TRUSTED_SOURCES.join(' OR site:')}`;
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -87,11 +92,13 @@ Deno.serve(async (req) => {
           {
             role: 'system',
             content: `You are a news aggregator specializing in Nigerian tax news. Extract and summarize the latest tax reform news and announcements from Nigeria. Focus on:
-- FIRS (Federal Inland Revenue Service) announcements
-- Tax reform bills and policies
-- VAT and income tax updates
-- Corporate tax changes
-- Tax compliance news
+- NRS (Nigeria Revenue Service) announcements (replaced FIRS in 2025)
+- Nigeria Tax Act 2025 implementation updates
+- VAT and personal income tax updates
+- Corporate tax (CIT) changes and small company exemptions
+- Development Levy news
+- Tax compliance and e-invoicing requirements
+- Economic Development Incentive (EDI) updates
 
 For each news item, provide:
 1. A clear, factual title
@@ -99,7 +106,7 @@ For each news item, provide:
 3. The source URL
 4. The source name
 5. An estimated publish date if available
-6. A category (reform, firs, vat, compliance, corporate, or general)
+6. A category (reform, nrs, vat, compliance, corporate, pit, or general)
 
 Return the results as a JSON array with this structure:
 [{"title": "...", "summary": "...", "source_url": "...", "source_name": "...", "published_at": "YYYY-MM-DD or null", "category": "..."}]
