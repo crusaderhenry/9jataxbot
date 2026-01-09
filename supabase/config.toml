@@ -1,1 +1,10 @@
 project_id = "awqnvsxvjbtpkweoaion"
+
+[functions.elevenlabs-conversation-token]
+verify_jwt = false
+
+[functions.tax-chat]
+verify_jwt = false
+
+[functions.fetch-tax-news]
+verify_jwt = false

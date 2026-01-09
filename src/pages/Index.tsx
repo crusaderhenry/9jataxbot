@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import MobileStickyActions from "@/components/MobileStickyActions";
 import TaxExemptionSection from "@/components/TaxExemptionSection";
 import TaxCalendarSection from "@/components/TaxCalendarSection";
+import TaxNewsSection from "@/components/TaxNewsSection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import { useModal } from "@/contexts/ModalContext";
@@ -30,6 +31,9 @@ const Index = () => {
       </div>
       <div id="calendar">
         <TaxCalendarSection />
+      </div>
+      <div id="news">
+        <TaxNewsSection />
       </div>
       <div id="faq">
         <FAQSection onOpenChat={openChat} />

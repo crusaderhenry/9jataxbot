@@ -1,4 +1,4 @@
-import { FileText, Mic, MessageCircle, Clock, Download } from "lucide-react";
+import { FileText, Mic, MessageCircle, Clock, Download, Newspaper } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -52,6 +52,14 @@ const Footer = () => {
               className="text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               Terms of Service
+            </Link>
+            <span className="text-muted-foreground">•</span>
+            <Link 
+              to="/news" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+            >
+              <Newspaper className="w-3 h-3" />
+              Tax News
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 

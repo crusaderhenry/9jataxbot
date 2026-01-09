@@ -10,6 +10,7 @@ import Install from "./pages/Install";
 import AboutUs from "./pages/AboutUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import TaxNews from "./pages/TaxNews";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/about" element={<AboutUs />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/news" element={<TaxNews />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
