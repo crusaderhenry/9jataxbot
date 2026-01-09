@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/popover";
 import { useTheme } from "next-themes";
 import { usePwaInstall } from "@/hooks/use-pwa-install";
-import naijaTaxBotLogo from "@/assets/naijataxbot-logo.png";
+import naijaTaxAILogo from "@/assets/naijataxai-logo.png";
 
 interface NavbarProps {
   onOpenChat: () => void;
@@ -87,20 +87,48 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="flex items-center gap-2"
-          >
-            <img src={naijaTaxBotLogo} alt="NaijaTaxAI" className="w-8 h-8 rounded-lg" />
-            <span className="font-display text-xl font-bold text-foreground">
-              <span className="text-primary">Naija</span>TaxAI
-            </span>
-          </a>
+          {/* Logo + Mobile Install */}
+          <div className="flex items-center gap-2">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="flex items-center gap-2"
+            >
+              <img src={naijaTaxAILogo} alt="NaijaTaxAI" className="w-8 h-8 rounded-lg" />
+              <span className="font-display text-xl font-bold text-foreground">
+                <span className="text-primary">Naija</span>TaxAI
+              </span>
+            </a>
+            
+            {/* Mobile Install Button */}
+            {!isInstalled && (
+              <div className="md:hidden">
+                {isInstallable ? (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={promptInstall}
+                    className="text-primary h-8 w-8"
+                  >
+                    <Download className="w-4 h-4" />
+                  </Button>
+                ) : (
+                  <Link to="/install">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-primary h-8 w-8"
+                    >
+                      <Download className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
