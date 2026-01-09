@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Mic, Loader2, Bot, User, Volume2, MessageCircle, RotateCcw } from "lucide-react";
+import { Send, Mic, Loader2, Bot, User, Volume2, Clock, MessageCircle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -394,20 +394,21 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
         {/* Input */}
         <div className="p-4 border-t border-border flex-shrink-0">
           <div className="flex items-center gap-2">
-            <Button
-              variant={isVoiceMode ? "default" : "outline"}
-              size="icon"
-              onClick={isVoiceMode ? stopVoiceChat : startVoiceChat}
-              disabled={isVoiceConnecting || isLoading}
-              className={isVoiceMode ? "accent-gradient text-primary-foreground" : ""}
-              title={isVoiceMode ? "End voice chat" : "Start voice chat"}
-            >
-              {isVoiceConnecting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
+            <div className="relative group">
+              <Button
+                variant="outline"
+                size="icon"
+                disabled={true}
+                className="opacity-50 cursor-not-allowed"
+                title="Voice AI coming soon"
+              >
                 <Mic className="w-4 h-4" />
-              )}
-            </Button>
+              </Button>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-border">
+                <Clock className="w-3 h-3 inline mr-1" />
+                Voice AI coming soon
+              </div>
+            </div>
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
