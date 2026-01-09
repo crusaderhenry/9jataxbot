@@ -69,26 +69,41 @@ const calculatePersonalTax = (annualIncome: number): {
   return { tax: totalTax, effectiveRate, breakdown };
 };
 
-// 2025 Nigeria Tax Act: Small = Turnover ≤ ₦100M (exempt), Large = Turnover > ₦100M (30% CIT + 4% Dev Levy)
-const calculateCompanyTax = (turnover: number, profit: number): {
+// 2025 Nigeria Tax Act:
+// Small = Turnover ≤ ₦100M AND Fixed Assets ≤ ₦250M (exempt from CIT, CGT, Dev Levy)
+// Large = Turnover > ₦100M OR Fixed Assets > ₦250M (30% CIT + 4% Dev Levy)
+const calculateCompanyTax = (turnover: number, fixedAssets: number, profit: number): {
   tier: 'small' | 'large';
   citRate: number;
   cit: number;
   developmentLevy: number;
   totalTax: number;
   effectiveRate: number;
+  classificationReason: string;
 } => {
   let tier: 'small' | 'large';
   let citRate: number;
+  let classificationReason: string;
 
-  // Small company: Turnover ≤ ₦100M - exempt from CIT, CGT, and Development Levy
-  // Large company: Turnover > ₦100M - 30% CIT + 4% Development Levy
-  if (turnover <= 100_000_000) {
-    tier = 'small';
-    citRate = 0;
-  } else {
+  // Small company: Turnover ≤ ₦100M AND Fixed Assets ≤ ₦250M
+  // Large company: Turnover > ₦100M OR Fixed Assets > ₦250M
+  const turnoverExceedsThreshold = turnover > 100_000_000;
+  const assetsExceedThreshold = fixedAssets > 250_000_000;
+
+  if (turnoverExceedsThreshold || assetsExceedThreshold) {
     tier = 'large';
     citRate = 0.30;
+    if (turnoverExceedsThreshold && assetsExceedThreshold) {
+      classificationReason = 'Turnover > ₦100M AND Assets > ₦250M';
+    } else if (turnoverExceedsThreshold) {
+      classificationReason = 'Turnover > ₦100M';
+    } else {
+      classificationReason = 'Fixed Assets > ₦250M';
+    }
+  } else {
+    tier = 'small';
+    citRate = 0;
+    classificationReason = 'Turnover ≤ ₦100M AND Assets ≤ ₦250M';
   }
 
   const cit = profit * citRate;
@@ -97,7 +112,7 @@ const calculateCompanyTax = (turnover: number, profit: number): {
   const totalTax = cit + developmentLevy;
   const effectiveRate = profit > 0 ? (totalTax / profit) * 100 : 0;
 
-  return { tier, citRate, cit, developmentLevy, totalTax, effectiveRate };
+  return { tier, citRate, cit, developmentLevy, totalTax, effectiveRate, classificationReason };
 };
 
 const formatCurrency = (amount: number) => {
@@ -139,6 +154,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
 
   // Limited Company inputs
   const [annualTurnover, setAnnualTurnover] = useState<string>("");
+  const [fixedAssets, setFixedAssets] = useState<string>("");
   const [taxableProfit, setTaxableProfit] = useState<string>("");
   const [companyResult, setCompanyResult] = useState<{
     tier: 'small' | 'large';
@@ -147,6 +163,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
     developmentLevy: number;
     totalTax: number;
     effectiveRate: number;
+    classificationReason: string;
   } | null>(null);
 
   const handleCalculatePersonal = () => {
@@ -164,9 +181,10 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
 
   const handleCalculateCompany = () => {
     const turnover = parseInputValue(annualTurnover);
+    const assets = parseInputValue(fixedAssets);
     const profit = parseInputValue(taxableProfit);
     if (turnover <= 0 || profit <= 0) return;
-    setCompanyResult(calculateCompanyTax(turnover, profit));
+    setCompanyResult(calculateCompanyTax(turnover, assets, profit));
   };
 
   const handleReset = () => {
@@ -178,6 +196,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
       setBusinessResult(null);
     } else {
       setAnnualTurnover("");
+      setFixedAssets("");
       setTaxableProfit("");
       setCompanyResult(null);
     }
@@ -186,7 +205,13 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
   const personalAnnualIncome = parseInputValue(monthlyIncome) * 12;
   const businessProfitValue = parseInputValue(annualProfit);
   const companyTurnoverValue = parseInputValue(annualTurnover);
+  const companyFixedAssetsValue = parseInputValue(fixedAssets);
   const companyProfitValue = parseInputValue(taxableProfit);
+
+  // Determine company classification based on both criteria
+  const isLargeByTurnover = companyTurnoverValue > 100_000_000;
+  const isLargeByAssets = companyFixedAssetsValue > 250_000_000;
+  const isLargeCompany = isLargeByTurnover || isLargeByAssets;
 
   const getTierBadge = (tier: 'small' | 'large') => {
     const config = {
@@ -338,6 +363,13 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
 
               {/* Limited Company Tab */}
               <TabsContent value="company" className="space-y-6 mt-6">
+                <div className="bg-muted/50 rounded-lg p-3 flex items-start gap-2">
+                  <Info className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
+                  <p className="text-sm text-muted-foreground">
+                    <strong>2025 CIT Rules:</strong> Small company (0% CIT) if Turnover ≤ ₦100M <strong>AND</strong> Fixed Assets ≤ ₦250M. Otherwise, Large company (30% CIT + 4% Dev Levy).
+                  </p>
+                </div>
+
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
@@ -349,7 +381,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                           <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>Total revenue/sales for the year. This determines your company size tier and applicable CIT rate.</p>
+                          <p>Total revenue/sales for the year. Companies with turnover above ₦100M are classified as large.</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -363,15 +395,52 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                       className="text-lg h-12"
                     />
                     {annualTurnover && (
-                      <div className="flex items-center gap-2">
-                        <Badge variant={companyTurnoverValue <= 100_000_000 ? 'secondary' : 'destructive'}>
-                          {companyTurnoverValue <= 100_000_000 
-                            ? 'Small Company (0% CIT)' 
-                            : 'Large Company (30% CIT + 4% Dev Levy)'}
-                        </Badge>
+                      <div className="text-xs text-muted-foreground">
+                        {isLargeByTurnover ? '❌ Exceeds ₦100M threshold' : '✅ Within ₦100M threshold'}
                       </div>
                     )}
                   </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="company-assets" className="text-sm font-medium">
+                        Fixed Assets Value (₦)
+                      </Label>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>Total value of fixed/tangible assets (land, buildings, equipment, vehicles, etc.). Companies with fixed assets above ₦250M are classified as large.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <Input
+                      id="company-assets"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="e.g. 100,000,000"
+                      value={fixedAssets}
+                      onChange={(e) => { setFixedAssets(formatInputValue(e.target.value)); setCompanyResult(null); }}
+                      className="text-lg h-12"
+                    />
+                    {fixedAssets && (
+                      <div className="text-xs text-muted-foreground">
+                        {isLargeByAssets ? '❌ Exceeds ₦250M threshold' : '✅ Within ₦250M threshold'}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Classification Badge */}
+                  {(annualTurnover || fixedAssets) && (
+                    <div className="flex items-center gap-2 pt-1">
+                      <Badge variant={isLargeCompany ? 'destructive' : 'secondary'}>
+                        {isLargeCompany 
+                          ? 'Large Company (30% CIT + 4% Dev Levy)' 
+                          : 'Small Company (0% CIT)'}
+                      </Badge>
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
@@ -408,19 +477,24 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                     Calculate Tax
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                  <Button variant="outline" onClick={handleReset} disabled={!annualTurnover && !taxableProfit && !companyResult}>
+                  <Button variant="outline" onClick={handleReset} disabled={!annualTurnover && !fixedAssets && !taxableProfit && !companyResult}>
                     <RotateCcw className="w-4 h-4" />
                   </Button>
                 </div>
 
                 {companyResult && (
                   <div className="space-y-4 animate-fade-in">
-                    <div className="flex items-center gap-2">
-                      <Badge {...getTierBadge(companyResult.tier)}>
-                        {getTierBadge(companyResult.tier).label}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">
-                        CIT Rate: {(companyResult.citRate * 100).toFixed(0)}%
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <Badge {...getTierBadge(companyResult.tier)}>
+                          {getTierBadge(companyResult.tier).label}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">
+                          CIT Rate: {(companyResult.citRate * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        Classification: {companyResult.classificationReason}
                       </span>
                     </div>
 
