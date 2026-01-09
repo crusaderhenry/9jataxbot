@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, Calculator, MessageCircle, Sun, Moon, Download, Share } from "lucide-react";
+import { Menu, Calculator, MessageCircle, Sun, Moon, Download, Share, MoreVertical } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -28,7 +29,7 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const { theme, setTheme } = useTheme();
-  const { isInstallable, isInstalled, isIOS, promptInstall } = usePwaInstall();
+  const { isInstallable, isInstalled, isIOS, isAndroid, promptInstall } = usePwaInstall();
 
   useEffect(() => {
     setMounted(true);
@@ -120,9 +121,19 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
 
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center gap-2">
-            {/* Install App Button */}
+            {/* Install App Button - Always show unless installed */}
             {!isInstalled && (
-              isIOS ? (
+              isInstallable ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={promptInstall}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Install
+                </Button>
+              ) : (
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -134,26 +145,31 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
                       Install
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-64 p-4" align="end">
-                    <div className="space-y-2">
+                  <PopoverContent className="w-72 p-4" align="end">
+                    <div className="space-y-3">
                       <p className="text-sm font-medium">Install NaijaTaxBot</p>
-                      <p className="text-xs text-muted-foreground">
-                        Tap <Share className="w-3 h-3 inline mx-1" /> then "Add to Home Screen" to install this app.
-                      </p>
+                      {isIOS ? (
+                        <p className="text-xs text-muted-foreground">
+                          Tap <Share className="w-3 h-3 inline mx-1" /> then "Add to Home Screen" to install.
+                        </p>
+                      ) : isAndroid ? (
+                        <p className="text-xs text-muted-foreground">
+                          Tap <MoreVertical className="w-3 h-3 inline mx-1" /> menu, then "Install app" or "Add to Home screen".
+                        </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Look for the install icon <Download className="w-3 h-3 inline mx-1" /> in your browser's address bar.
+                        </p>
+                      )}
+                      <Link to="/install" className="block">
+                        <Button variant="outline" size="sm" className="w-full mt-2">
+                          See detailed instructions
+                        </Button>
+                      </Link>
                     </div>
                   </PopoverContent>
                 </Popover>
-              ) : isInstallable ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={promptInstall}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Install
-                </Button>
-              ) : null
+              )
             )}
             {mounted && (
               <Button
@@ -217,16 +233,9 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
 
                 {/* Mobile CTAs */}
                 <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                  {/* Mobile Install Button */}
+                  {/* Mobile Install Button - Always show unless installed */}
                   {!isInstalled && (
-                    isIOS ? (
-                      <div className="px-4 py-3 rounded-lg bg-muted/50">
-                        <p className="text-sm font-medium mb-1">Install NaijaTaxBot</p>
-                        <p className="text-xs text-muted-foreground">
-                          Tap <Share className="w-3 h-3 inline mx-1" /> then "Add to Home Screen"
-                        </p>
-                      </div>
-                    ) : isInstallable ? (
+                    isInstallable ? (
                       <Button
                         variant="outline"
                         onClick={() => {
@@ -238,7 +247,17 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
                         <Download className="w-4 h-4 mr-2" />
                         Install App
                       </Button>
-                    ) : null
+                    ) : (
+                      <Link to="/install" onClick={() => setIsOpen(false)}>
+                        <Button
+                          variant="outline"
+                          className="justify-start w-full"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Install App
+                        </Button>
+                      </Link>
+                    )
                   )}
                   {mounted && (
                     <Button
