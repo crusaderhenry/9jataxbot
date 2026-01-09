@@ -210,16 +210,16 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
             <Tabs value={entityType} onValueChange={(v) => setEntityType(v as EntityType)} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="personal" className="flex items-center gap-1.5 text-xs sm:text-sm">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">Personal</span>
+                  <User className="w-4 h-4 hidden sm:block" />
+                  Personal
                 </TabsTrigger>
                 <TabsTrigger value="business" className="flex items-center gap-1.5 text-xs sm:text-sm">
-                  <Briefcase className="w-4 h-4" />
-                  <span className="hidden sm:inline">Business Name</span>
+                  <Briefcase className="w-4 h-4 hidden sm:block" />
+                  Business Name
                 </TabsTrigger>
                 <TabsTrigger value="company" className="flex items-center gap-1.5 text-xs sm:text-sm">
-                  <Building2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Limited Co.</span>
+                  <Building2 className="w-4 h-4 hidden sm:block" />
+                  Limited Co.
                 </TabsTrigger>
               </TabsList>
 
