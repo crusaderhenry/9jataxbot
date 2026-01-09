@@ -3,9 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePwaInstall } from "@/hooks/use-pwa-install";
 import { Link } from "react-router-dom";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { useModal } from "@/contexts/ModalContext";
 
 export default function Install() {
   const { isInstallable, isInstalled, isIOS, isSafari, isChrome, isFirefox, isSamsung, isAndroid, promptInstall, browserName } = usePwaInstall();
+  const { openChat, openCalculator } = useModal();
 
   const handleInstall = async () => {
     await promptInstall();
@@ -13,30 +17,35 @@ export default function Install() {
 
   if (isInstalled) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="max-w-md w-full text-center">
-          <CardHeader>
-            <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-              <Check className="w-8 h-8 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">Already Installed!</CardTitle>
-            <CardDescription>
-              NaijaTaxAI is already installed on your device. You can find it on your home screen.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link to="/">
-              <Button className="w-full">Go to App</Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-background">
+        <Navbar onOpenChat={openChat} onOpenCalculator={openCalculator} />
+        <div className="flex items-center justify-center p-4 pt-24">
+          <Card className="max-w-md w-full text-center">
+            <CardHeader>
+              <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                <Check className="w-8 h-8 text-primary" />
+              </div>
+              <CardTitle className="text-2xl">Already Installed!</CardTitle>
+              <CardDescription>
+                NaijaTaxAI is already installed on your device. You can find it on your home screen.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/">
+                <Button className="w-full">Go to App</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto px-4 py-8 sm:py-16">
+      <Navbar onOpenChat={openChat} onOpenCalculator={openCalculator} />
+      <div className="max-w-2xl mx-auto px-4 py-8 sm:py-16 pt-24">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl sm:text-4xl font-bold mb-4">
@@ -268,6 +277,7 @@ export default function Install() {
           </Link>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

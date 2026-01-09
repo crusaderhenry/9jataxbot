@@ -1,17 +1,14 @@
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import MobileStickyActions from "@/components/MobileStickyActions";
 import TaxExemptionSection from "@/components/TaxExemptionSection";
 import TaxCalendarSection from "@/components/TaxCalendarSection";
 import FAQSection from "@/components/FAQSection";
-import TaxCalculator from "@/components/TaxCalculator";
-import TaxChatBot from "@/components/TaxChatBot";
 import Footer from "@/components/Footer";
+import { useModal } from "@/contexts/ModalContext";
 
 const Index = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+  const { openChat, openCalculator } = useModal();
 
   const scrollToFAQ = () => {
     document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' });
@@ -20,12 +17,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background pb-24 sm:pb-0">
       <Navbar 
-        onOpenChat={() => setIsChatOpen(true)} 
-        onOpenCalculator={() => setIsCalculatorOpen(true)} 
+        onOpenChat={openChat} 
+        onOpenCalculator={openCalculator} 
       />
       <Hero 
-        onOpenChat={() => setIsChatOpen(true)}
-        onOpenCalculator={() => setIsCalculatorOpen(true)}
+        onOpenChat={openChat}
+        onOpenCalculator={openCalculator}
         onScrollToFAQ={scrollToFAQ}
       />
       <div id="exemptions">
@@ -35,23 +32,13 @@ const Index = () => {
         <TaxCalendarSection />
       </div>
       <div id="faq">
-        <FAQSection onOpenChat={() => setIsChatOpen(true)} />
+        <FAQSection onOpenChat={openChat} />
       </div>
       <Footer />
 
       <MobileStickyActions
-        onOpenChat={() => setIsChatOpen(true)}
-        onOpenCalculator={() => setIsCalculatorOpen(true)}
-      />
-      
-      <TaxChatBot 
-        open={isChatOpen} 
-        onClose={() => setIsChatOpen(false)} 
-      />
-      
-      <TaxCalculator 
-        open={isCalculatorOpen} 
-        onClose={() => setIsCalculatorOpen(false)} 
+        onOpenChat={openChat}
+        onOpenCalculator={openCalculator}
       />
     </div>
   );
