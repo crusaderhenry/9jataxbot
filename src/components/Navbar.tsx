@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, Calculator, MessageCircle, Sun, Moon, Download, Share, MoreVertical } from "lucide-react";
+import { Menu, Calculator, MessageCircle, Sun, Moon, Download, Share, MoreVertical, Newspaper } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -224,6 +224,16 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
                 )}
               </Button>
             )}
+            <Link to="/news">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Newspaper className="w-4 h-4 mr-2" />
+                News
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
