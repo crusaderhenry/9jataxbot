@@ -20,6 +20,7 @@ interface NavbarProps {
 const navLinks = [
   { href: "#exemptions", label: "Exemptions" },
   { href: "#calendar", label: "Tax Calendar" },
+  { href: "#news", label: "Tax News" },
   { href: "#faq", label: "FAQs" },
 ];
 

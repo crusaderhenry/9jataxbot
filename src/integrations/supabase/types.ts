@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      tax_news: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          fetched_at: string | null
+          id: string
+          published_at: string | null
+          source_name: string | null
+          source_url: string
+          summary: string
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          published_at?: string | null
+          source_name?: string | null
+          source_url: string
+          summary: string
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          published_at?: string | null
+          source_name?: string | null
+          source_url?: string
+          summary?: string
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
