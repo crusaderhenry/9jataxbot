@@ -21,7 +21,7 @@ export default function MobileStickyActions({
               size="lg"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
-              Ask Tax Bot
+              Ask TaxAI
             </Button>
             <Button
               onClick={onOpenCalculator}

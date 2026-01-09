@@ -273,7 +273,7 @@ const FAQSection = ({ onOpenChat }: FAQSectionProps) => {
                 className="accent-gradient text-primary-foreground"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                Ask the Tax Bot
+                Ask TaxAI
               </Button>
             </div>
           </div>

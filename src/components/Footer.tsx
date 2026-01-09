@@ -23,21 +23,35 @@ const Footer = () => {
         {/* Footer Content */}
         <div className="text-center">
           <h3 className="font-display text-lg font-bold text-foreground mb-2">
-            <span className="text-primary">Naija</span>TaxBot
+            <span className="text-primary">Naija</span>TaxAI
           </h3>
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4">
             <FileText className="w-4 h-4" />
             <span>Based on Bills HB 1756-1759</span>
           </div>
           <p className="text-xs text-muted-foreground mb-2">
-            © {new Date().getFullYear()} NaijaTaxBot. Educational tool only. Not legal or financial advice.
+            © {new Date().getFullYear()} NaijaTaxAI. Educational tool only. Not legal or financial advice.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link 
+              to="/about" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              About Us
+            </Link>
+            <span className="text-muted-foreground">•</span>
             <Link 
               to="/privacy" 
               className="text-xs text-muted-foreground hover:text-primary transition-colors"
             >
               Privacy Policy
+            </Link>
+            <span className="text-muted-foreground">•</span>
+            <Link 
+              to="/terms" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              Terms of Service
             </Link>
             <span className="text-muted-foreground">•</span>
             <Link 

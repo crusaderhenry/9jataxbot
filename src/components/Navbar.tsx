@@ -96,9 +96,9 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
             }}
             className="flex items-center gap-2"
           >
-            <img src={naijaTaxBotLogo} alt="NaijaTaxBot" className="w-8 h-8 rounded-lg" />
+            <img src={naijaTaxBotLogo} alt="NaijaTaxAI" className="w-8 h-8 rounded-lg" />
             <span className="font-display text-xl font-bold text-foreground">
-              <span className="text-primary">Naija</span>TaxBot
+              <span className="text-primary">Naija</span>TaxAI
             </span>
           </a>
 
@@ -147,7 +147,7 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
                   </PopoverTrigger>
                   <PopoverContent className="w-72 p-4" align="end">
                     <div className="space-y-3">
-                      <p className="text-sm font-medium">Install NaijaTaxBot</p>
+                      <p className="text-sm font-medium">Install NaijaTaxAI</p>
                       {isIOS ? (
                         <p className="text-xs text-muted-foreground">
                           Tap <Share className="w-3 h-3 inline mx-1" /> then "Add to Home Screen" to install.

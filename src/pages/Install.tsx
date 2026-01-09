@@ -21,7 +21,7 @@ export default function Install() {
             </div>
             <CardTitle className="text-2xl">Already Installed!</CardTitle>
             <CardDescription>
-              NaijaTaxBot is already installed on your device. You can find it on your home screen.
+              NaijaTaxAI is already installed on your device. You can find it on your home screen.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -40,7 +40,7 @@ export default function Install() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-            Install <span className="text-primary">Naija</span>TaxBot
+            Install <span className="text-primary">Naija</span>TaxAI
           </h1>
           <p className="text-muted-foreground text-lg">
             Get quick access to Nigeria's AI-powered tax assistant right from your home screen.
@@ -264,7 +264,7 @@ export default function Install() {
         {/* Back Link */}
         <div className="text-center mt-8">
           <Link to="/" className="text-primary hover:underline">
-            ← Back to NaijaTaxBot
+            ← Back to NaijaTaxAI
           </Link>
         </div>
       </div>

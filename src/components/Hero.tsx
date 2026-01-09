@@ -31,7 +31,7 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       {/* Main content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto">
         <h1 className="animate-fade-up font-display text-5xl md:text-7xl font-bold text-foreground mb-6 tracking-tight" style={{ animationDelay: '0.2s' }}>
-          <span className="text-primary">Naija</span>TaxBot
+          <span className="text-primary">Naija</span>TaxAI
         </h1>
         <p className="animate-fade-up text-xl md:text-2xl text-foreground/80 mb-4 font-display" style={{ animationDelay: '0.3s' }}>
           Understand Nigeria's New Tax Laws
@@ -48,7 +48,7 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
             onClick={onOpenChat}
           >
             <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            Ask Tax Bot
+            Ask TaxAI
           </Button>
           <Button 
             size="lg" 
@@ -77,7 +77,7 @@ const Hero = ({ onOpenChat, onOpenCalculator, onScrollToFAQ }: HeroProps) => {
       <div className="animate-fade-up relative z-10 mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto w-full px-4" style={{ animationDelay: '0.7s' }}>
         <FeatureCard 
           icon={<MessageCircle className="w-5 h-5" />}
-          title="Tax Bot"
+          title="TaxAI"
           description="Chat with our AI tax assistant"
         />
         <FeatureCard 
