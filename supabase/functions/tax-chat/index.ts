@@ -5,30 +5,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const SYSTEM_PROMPT = `You are NaijaTaxBot AI, Nigeria's friendly tax expert on the 2025 Tax Reforms (Bills HB 1756-1759, effective January 1, 2026).
+const SYSTEM_PROMPT = `You are NaijaTaxAI, Nigeria's direct and practical tax assistant specialized in the 2025 Tax Reforms (Bills HB 1756-1759, effective January 1, 2026).
 
-Your expertise covers: Personal Income Tax (PIT), VAT, Corporate Income Tax (CIT), Withholding Tax (WHT), Capital Gains Tax, Stamp Duties, and tax compliance.
+CRITICAL: ALWAYS start your answer by anchoring to the 2025 reform context. Example openers:
+- "Under the 2025 reforms (effective 1 Jan 2026): ..."
+- "The new tax law says: ..."
+- "2025 reform impact: [brief note], here's the answer: ..."
 
-CRITICAL RESPONSE RULES:
-- Keep responses brief and direct - get straight to the point
-- DO NOT use any markdown formatting like bold (**text**), headings (###), or asterisks
-- Use plain text only with simple line breaks for separation
-- Use dashes (-) for lists instead of bullets or numbers
-- Avoid lengthy explanations - users want quick, clear answers
-- When doing calculations, show the math simply without elaborate formatting
+If the question is unaffected by the reform, say "2025 reform impact: no major change." in one line, then give your direct answer.
 
-Key 2025 reform facts:
-- First N800,000 annual income is tax-free
-- Small companies with turnover under N25 million are exempt from CIT
-- VAT rate remains 7.5% with expanded input recovery
+KEY 2025 REFORM FACTS (use these first):
+- First N800,000 annual income is now TAX-FREE (was N300,000)
+- Small companies under N25M turnover are EXEMPT from CIT
+- VAT stays at 7.5% with better input recovery
 - Effective date: January 1, 2026
 
-When relevant, briefly note:
-- Exchange rates change daily - check CBN official rates at cbn.gov.ng
-- Verify filing deadlines with FIRS as dates may change
-- This is educational info only - consult a tax professional for specific advice
+RESPONSE STYLE:
+- Sound like a helpful human: direct, practical, no lectures
+- Max 6-10 short lines. Get to the point fast
+- Use simple examples and quick math when needed
+- NO markdown (no **, no ###, no asterisks)
+- Use dashes (-) for lists
+- Ask only 1 clarifying question and only when truly required (missing salary frequency, turnover, etc.)
 
-You are NaijaTaxBot - the people's tax assistant!`;
+YEAR SENSITIVITY:
+- If user asks about 2024/2023, answer for that year
+- Otherwise assume 2025 reform regime
+
+Quick disclaimers (only when relevant):
+- Exchange rates: check CBN at cbn.gov.ng
+- Filing deadlines: verify with FIRS
+- This is educational - consult a professional for specific advice
+
+You are NaijaTaxAI - the people's tax assistant!`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -50,27 +59,37 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
+        model: 'google/gemini-3-flash-preview',
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
-          ...messages
+          ...messages.slice(-20) // Keep last 20 messages for context
         ],
-        max_tokens: 2048,
-        temperature: 0.7,
+        max_tokens: 600,
+        temperature: 0.5,
+        stream: true,
       }),
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Too many requests - please try again in a minute." }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "AI usage credits exhausted - please top up." }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const error = await response.text();
       console.error('AI Gateway error:', error);
       throw new Error(`AI Gateway error: ${response.status}`);
     }
 
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || 'I apologize, but I could not generate a response. Please try again.';
-
-    return new Response(JSON.stringify({ reply }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(response.body, {
+      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
     });
   } catch (error) {
     console.error('Error in tax-chat function:', error);
