@@ -94,19 +94,15 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo + Mobile Install */}
           <div className="flex items-center gap-2">
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+            <Link
+              to="/"
               className="flex items-center gap-2"
             >
               <img src={naijaTaxAILogo} alt="NaijaTaxAI" className="w-8 h-8 rounded-lg" />
               <span className="font-display text-xl font-bold text-foreground">
                 <span className="text-primary">Naija</span>TaxAI
               </span>
-            </a>
+            </Link>
             
             {/* Mobile Install Button */}
             {!isInstalled && (
