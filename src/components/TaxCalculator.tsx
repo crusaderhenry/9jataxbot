@@ -25,8 +25,9 @@ const taxBrackets = [
   { min: 50000001, max: Infinity, rate: 0.25, description: "25% bracket" },
 ];
 
-// Company Income Tax tiers based on turnover
-const EDUCATION_TAX_RATE = 0.03;
+// 2025 Nigeria Tax Act: Development Levy replaces Tertiary Education Tax
+// Small companies (Turnover ≤ ₦100M) are exempt from CIT, CGT, and Development Levy
+const DEVELOPMENT_LEVY_RATE = 0.04; // 4% for large companies only
 
 const calculatePersonalTax = (annualIncome: number): { 
   tax: number; 
@@ -68,34 +69,35 @@ const calculatePersonalTax = (annualIncome: number): {
   return { tax: totalTax, effectiveRate, breakdown };
 };
 
+// 2025 Nigeria Tax Act: Small = Turnover ≤ ₦100M (exempt), Large = Turnover > ₦100M (30% CIT + 4% Dev Levy)
 const calculateCompanyTax = (turnover: number, profit: number): {
-  tier: 'small' | 'medium' | 'large';
+  tier: 'small' | 'large';
   citRate: number;
   cit: number;
-  educationTax: number;
+  developmentLevy: number;
   totalTax: number;
   effectiveRate: number;
 } => {
-  let tier: 'small' | 'medium' | 'large';
+  let tier: 'small' | 'large';
   let citRate: number;
 
-  if (turnover <= 25_000_000) {
+  // Small company: Turnover ≤ ₦100M - exempt from CIT, CGT, and Development Levy
+  // Large company: Turnover > ₦100M - 30% CIT + 4% Development Levy
+  if (turnover <= 100_000_000) {
     tier = 'small';
     citRate = 0;
-  } else if (turnover <= 100_000_000) {
-    tier = 'medium';
-    citRate = 0.20;
   } else {
     tier = 'large';
     citRate = 0.30;
   }
 
   const cit = profit * citRate;
-  const educationTax = profit * EDUCATION_TAX_RATE;
-  const totalTax = cit + educationTax;
+  // Development Levy only applies to large companies
+  const developmentLevy = tier === 'large' ? profit * DEVELOPMENT_LEVY_RATE : 0;
+  const totalTax = cit + developmentLevy;
   const effectiveRate = profit > 0 ? (totalTax / profit) * 100 : 0;
 
-  return { tier, citRate, cit, educationTax, totalTax, effectiveRate };
+  return { tier, citRate, cit, developmentLevy, totalTax, effectiveRate };
 };
 
 const formatCurrency = (amount: number) => {
@@ -139,10 +141,10 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
   const [annualTurnover, setAnnualTurnover] = useState<string>("");
   const [taxableProfit, setTaxableProfit] = useState<string>("");
   const [companyResult, setCompanyResult] = useState<{
-    tier: 'small' | 'medium' | 'large';
+    tier: 'small' | 'large';
     citRate: number;
     cit: number;
-    educationTax: number;
+    developmentLevy: number;
     totalTax: number;
     effectiveRate: number;
   } | null>(null);
@@ -186,11 +188,10 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
   const companyTurnoverValue = parseInputValue(annualTurnover);
   const companyProfitValue = parseInputValue(taxableProfit);
 
-  const getTierBadge = (tier: 'small' | 'medium' | 'large') => {
+  const getTierBadge = (tier: 'small' | 'large') => {
     const config = {
-      small: { label: 'Small Company', variant: 'secondary' as const },
-      medium: { label: 'Medium Company', variant: 'default' as const },
-      large: { label: 'Large Company', variant: 'destructive' as const },
+      small: { label: 'Small Company (0% CIT)', variant: 'secondary' as const },
+      large: { label: 'Large Company (30% CIT + 4% Dev Levy)', variant: 'destructive' as const },
     };
     return config[tier];
   };
@@ -363,12 +364,10 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                     />
                     {annualTurnover && (
                       <div className="flex items-center gap-2">
-                        <Badge variant={
-                          companyTurnoverValue <= 25_000_000 ? 'secondary' :
-                          companyTurnoverValue <= 100_000_000 ? 'default' : 'destructive'
-                        }>
-                          {companyTurnoverValue <= 25_000_000 ? 'Small Company (0% CIT)' :
-                           companyTurnoverValue <= 100_000_000 ? 'Medium Company (20% CIT)' : 'Large Company (30% CIT)'}
+                        <Badge variant={companyTurnoverValue <= 100_000_000 ? 'secondary' : 'destructive'}>
+                          {companyTurnoverValue <= 100_000_000 
+                            ? 'Small Company (0% CIT)' 
+                            : 'Large Company (30% CIT + 4% Dev Levy)'}
                         </Badge>
                       </div>
                     )}
@@ -384,7 +383,7 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                           <HelpCircle className="w-4 h-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>Assessable profit after all allowable deductions. This is the base for calculating Company Income Tax and Tertiary Education Tax.</p>
+                          <p>Assessable profit after all allowable deductions. This is the base for calculating Company Income Tax and Development Levy.</p>
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -446,20 +445,22 @@ const TaxCalculator = ({ open, onClose }: TaxCalculatorProps) => {
                         <span className="text-muted-foreground">Company Income Tax ({(companyResult.citRate * 100).toFixed(0)}%)</span>
                         <span className="font-medium">{formatCurrency(companyResult.cit)}</span>
                       </div>
-                      <div className="flex items-center justify-between text-sm py-2 border-b border-border">
-                        <div className="flex items-center gap-1">
-                          <span className="text-muted-foreground">Tertiary Education Tax (3%)</span>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>All companies pay 3% of assessable profit as education tax</p>
-                            </TooltipContent>
-                          </Tooltip>
+                      {companyResult.tier === 'large' && (
+                        <div className="flex items-center justify-between text-sm py-2 border-b border-border">
+                          <div className="flex items-center gap-1">
+                            <span className="text-muted-foreground">Development Levy (4%)</span>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Large companies pay 4% of assessable profit as Development Levy (replaced Tertiary Education Tax)</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                          <span className="font-medium">{formatCurrency(companyResult.developmentLevy)}</span>
                         </div>
-                        <span className="font-medium">{formatCurrency(companyResult.educationTax)}</span>
-                      </div>
+                      )}
                     </div>
 
                     <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
