@@ -90,32 +90,133 @@ const TaxChatBot = ({ open, onClose }: TaxChatBotProps) => {
     setInput("");
     setIsLoading(true);
 
+    const assistantId = (Date.now() + 1).toString();
+    let assistantContent = "";
+
     try {
-      const { data, error } = await supabase.functions.invoke("tax-chat", {
-        body: {
+      const chatUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tax-chat`;
+      
+      const resp = await fetch(chatUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content,
           })),
-        },
+        }),
       });
 
-      if (error) throw error;
+      if (!resp.ok) {
+        const errorData = await resp.json().catch(() => ({}));
+        if (resp.status === 429) {
+          toast.error("Too many requests - please wait a moment and try again.");
+          throw new Error(errorData.error || "Rate limited");
+        }
+        if (resp.status === 402) {
+          toast.error("AI usage credits exhausted.");
+          throw new Error(errorData.error || "Credits exhausted");
+        }
+        throw new Error(errorData.error || `Request failed: ${resp.status}`);
+      }
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: data.reply,
-      };
+      if (!resp.body) throw new Error("No response body");
 
-      setMessages(prev => [...prev, assistantMessage]);
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let streamDone = false;
+
+      // Add empty assistant message to start streaming into
+      setMessages(prev => [...prev, { id: assistantId, role: "assistant", content: "" }]);
+
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
+
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
+
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
+
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
+          }
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => 
+                prev.map(m => m.id === assistantId ? { ...m, content: assistantContent } : m)
+              );
+            }
+          } catch {
+            // Incomplete JSON, put it back and wait for more
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
+        }
+      }
+
+      // Final flush
+      if (textBuffer.trim()) {
+        for (let raw of textBuffer.split("\n")) {
+          if (!raw) continue;
+          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+          if (raw.startsWith(":") || raw.trim() === "") continue;
+          if (!raw.startsWith("data: ")) continue;
+          const jsonStr = raw.slice(6).trim();
+          if (jsonStr === "[DONE]") continue;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              assistantContent += content;
+              setMessages(prev => 
+                prev.map(m => m.id === assistantId ? { ...m, content: assistantContent } : m)
+              );
+            }
+          } catch { /* ignore */ }
+        }
+      }
+
+      // If no content was streamed, show fallback
+      if (!assistantContent) {
+        setMessages(prev => 
+          prev.map(m => m.id === assistantId ? { ...m, content: "I couldn't generate a response. Please try again." } : m)
+        );
+      }
     } catch (error) {
       console.error("Chat error:", error);
-      setMessages(prev => [...prev, {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: "I apologize, but I'm having trouble connecting right now. Please try again in a moment.",
-      }]);
+      // If we already created the assistant message, update it
+      if (assistantContent === "") {
+        setMessages(prev => {
+          const hasAssistant = prev.some(m => m.id === assistantId);
+          if (hasAssistant) {
+            return prev.map(m => m.id === assistantId 
+              ? { ...m, content: "I'm having trouble connecting right now. Please try again in a moment." } 
+              : m
+            );
+          }
+          return [...prev, {
+            id: assistantId,
+            role: "assistant" as const,
+            content: "I'm having trouble connecting right now. Please try again in a moment.",
+          }];
+        });
+      }
     } finally {
       setIsLoading(false);
     }
