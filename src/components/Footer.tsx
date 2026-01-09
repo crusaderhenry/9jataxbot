@@ -1,4 +1,4 @@
-import { FileText, Mic, MessageCircle, Clock } from "lucide-react";
+import { FileText, Mic, MessageCircle, Clock, Download } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -32,12 +32,22 @@ const Footer = () => {
           <p className="text-xs text-muted-foreground mb-2">
             © {new Date().getFullYear()} NaijaTaxBot. Educational tool only. Not legal or financial advice.
           </p>
-          <Link 
-            to="/privacy" 
-            className="text-xs text-muted-foreground hover:text-primary transition-colors"
-          >
-            Privacy Policy
-          </Link>
+          <div className="flex items-center justify-center gap-4">
+            <Link 
+              to="/privacy" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <span className="text-muted-foreground">•</span>
+            <Link 
+              to="/install" 
+              className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+            >
+              <Download className="w-3 h-3" />
+              Install App
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
