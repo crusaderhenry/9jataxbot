@@ -3,15 +3,18 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Target, Users, Shield, Lightbulb, Heart } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useModal } from "@/contexts/ModalContext";
 
 const AboutUs = () => {
+  const { openChat, openCalculator } = useModal();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar onOpenChat={() => {}} onOpenCalculator={() => {}} />
+      <Navbar onOpenChat={openChat} onOpenCalculator={openCalculator} />
       
       <main className="pt-24 pb-16 px-4">
         <div className="max-w-3xl mx-auto">
