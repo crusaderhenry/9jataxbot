@@ -20,7 +20,7 @@ interface NavbarProps {
 const navLinks = [
   { href: "#exemptions", label: "Exemptions" },
   { href: "#calendar", label: "Tax Calendar" },
-  { href: "#news", label: "Tax News" },
+  { href: "/news", label: "Tax News", isPage: true },
   { href: "#faq", label: "FAQs" },
 ];
 
@@ -62,7 +62,11 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (href: string) => {
+  const handleNavClick = (href: string, isPage?: boolean) => {
+    if (isPage) {
+      setIsOpen(false);
+      return; // Let Link handle navigation
+    }
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -134,17 +138,27 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
-              <button
-                key={link.href}
-                onClick={() => scrollToSection(link.href)}
-                className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
-                  isActive(link.href)
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
-              >
-                {link.label}
-              </button>
+              link.isPage ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="px-4 py-2 text-sm font-medium transition-colors rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <button
+                  key={link.href}
+                  onClick={() => handleNavClick(link.href)}
+                  className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
+                    isActive(link.href)
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  {link.label}
+                </button>
+              )
             ))}
           </div>
 
@@ -246,17 +260,28 @@ const Navbar = ({ onOpenChat, onOpenCalculator }: NavbarProps) => {
                 {/* Mobile Nav Links */}
                 <div className="flex flex-col gap-1">
                   {navLinks.map((link) => (
-                    <button
-                      key={link.href}
-                      onClick={() => scrollToSection(link.href)}
-                      className={`px-4 py-3 text-left font-medium rounded-lg transition-colors ${
-                        isActive(link.href)
-                          ? "text-primary bg-primary/10"
-                          : "text-foreground hover:bg-muted/50"
-                      }`}
-                    >
-                      {link.label}
-                    </button>
+                    link.isPage ? (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className="px-4 py-3 text-left font-medium rounded-lg transition-colors text-foreground hover:bg-muted/50"
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <button
+                        key={link.href}
+                        onClick={() => handleNavClick(link.href)}
+                        className={`px-4 py-3 text-left font-medium rounded-lg transition-colors ${
+                          isActive(link.href)
+                            ? "text-primary bg-primary/10"
+                            : "text-foreground hover:bg-muted/50"
+                        }`}
+                      >
+                        {link.label}
+                      </button>
+                    )
                   ))}
                 </div>
 
